@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+	<title>mat2 - online edition</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css" />
+</head>
+<body>
+	<header>
+		<h1>mat2 - online edition</h1>
+	</header>
+	<section>
+		<h1>Remove metadata from your images</h1>
+		<p>Drag and drop anywhere you want and get your files cleaned</p>
+		<br>
+		<form method=post enctype=multipart/form-data>
+			<input type=file name=file id="upload_file" accept="{{ mimetypes }}">
+			<input type=submit value=Upload>
+		</form>
+	</section>
+</body>

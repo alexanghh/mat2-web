@@ -1,0 +1,21 @@
+header {
+	border-bottom: 1px solid black;
+	width: 100%;
+}
+
+header h1 {
+	text-align: center;
+}
+header a {
+	text-align:right;
+}
+
+section {
+        border-radius: 1em;
+        padding: 1em;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+}

@@ -8,14 +8,36 @@ from flask import send_from_directory, after_this_request
 
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = './'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1337'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = os.urandom(32)
+app.config['UPLOAD_FOLDER'] = './uploads/'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 
+mimetypes = 'image/jpeg, image/png'
+
+
+@app.route('/download/<string:filename>')
+def download_file(filename:str):
+    if filename != secure_filename(filename):
+        flash('naughty naughty')
+        return redirect(url_for('upload_file'))
+
+    filepath = secure_filename(filename)
+
+    complete_path = os.path.join(app.config['UPLOAD_FOLDER'], filepath)
+    if not os.path.exists(complete_path):
+        return redirect(url_for('upload_file'))
+
+    @after_this_request
+    def remove_file(response):
+        os.remove(complete_path)
+        return response
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
+
+@app.route('/about')
+def about():
+    return render_template('about.html', mimetypes=mimetypes)
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -24,7 +46,7 @@ def upload_file():
             flash('No file part')
             return redirect(request.url)
         uploaded_file = request.files['file']
-        if uploaded_file.filename == '':
+        if not uploaded_file.filename:
             flash('No selected file')
             return redirect(request.url)
         filename = secure_filename(uploaded_file.filename)
@@ -35,20 +57,23 @@ def upload_file():
         if parser is None:
             flash('The type %s is not supported' % mime)
             return redirect(url_for('upload_file'))
-        elif parser.remove_all() is not True:
+
+        meta = parser.get_meta()
+
+        if parser.remove_all() is not True:
             flash('Unable to clean ' % mime)
             return redirect(url_for('upload_file'))
-        os.remove(filename)
+        output_filename = os.path.basename(parser.output_filename)
 
-        @after_this_request
-        def remove_file(response):
-            os.remove(parser.output_filename)
-            return response
+        # Get metadata after cleanup 
+        parser, _ = parser_factory.get_parser(parser.output_filename)
+        meta_after = parser.get_meta()
+        os.remove(filepath)
 
-        return send_from_directory(app.config['UPLOAD_FOLDER'], parser.output_filename)
+        return render_template('download.html', mimetypes=mimetypes, meta=meta, filename=output_filename, meta_after=meta_after)
 
-    mimetypes = 'image/jpeg, image/png'
     return render_template('index.html', mimetypes=mimetypes)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

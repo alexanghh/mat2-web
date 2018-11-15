@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>» Metadata removed</h2>
+<p>
+{% if not meta_after %}
+mat2 managed to remove <b>all metadata</b> from your file.
+{% else %}
+mat2 <b>could not</b> remove all the metadata from your file, those are the remaining ones:
+<ul>
+	{% for key, value in meta_after.items() %}
+	<li> <b>{{ key }}</b>: {{ value }}</li>
+	{% endfor %}
+	</ul>
+{%endif %}
+</p>
+<a class="button button-primary" href='{{ url_for('download_file', filename=filename) }}'>⇩ Download cleaned file</a>
+
+<hr/>
+
+{% if meta %}
+<p>Just for fun, those are the metadata that mat2 detected in your file, before cleanup.</p>
+<div class='b'>
+	<ul>
+	{% for key, value in meta.items() %}
+	<li>{{ key }}: <i>{{ value }}</i></li>
+	{% endfor %}
+	</ul>
+</div>
+{% else %}
+meh
+{% endif %}
+
+<hr/>
+
+{% endblock %}
+

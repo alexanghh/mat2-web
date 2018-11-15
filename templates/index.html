@@ -1,20 +1,16 @@
-<!doctype html>
-<html>
-<head>
-	<title>mat2 - online edition</title>
-	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css" />
-</head>
-<body>
-	<header>
-		<h1>mat2 - online edition</h1>
-	</header>
-	<section>
-		<h1>Remove metadata from your images</h1>
-		<p>Drag and drop anywhere you want and get your files cleaned</p>
-		<br>
-		<form method=post enctype=multipart/form-data>
-			<input type=file name=file id="upload_file" accept="{{ mimetypes }}">
-			<input type=submit value=Upload>
-		</form>
-	</section>
-</body>
+{% extends "base.html" %}
+{% block content %}
+
+<h2>» Remove metadata</h2>
+<p>
+Upload your image, get a <em>cleaned</em> one in response.<br>
+	<br>
+	Please note that while we do not keep a copy of your image,<br>
+	there is no way that you could be certain about this: act accordingly.
+</p>
+<br>
+<form class='b' method=post enctype=multipart/form-data>
+	<input type=file name=file id="upload_file" accept="{{ mimetypes }}">
+	<input type=submit value=Upload>
+</form>
+{% endblock %}

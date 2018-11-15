@@ -1,21 +1,41 @@
-header {
-	border-bottom: 1px solid black;
-	width: 100%;
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), local('Raleway-Regular'), url(raleway-ext.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
 }
 
-header h1 {
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), local('Raleway-Regular'), url(raleway.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+
+.container {
+	margin-top: 18rem;
+}
+
+.flashes {
+	text-align: center;
+	border: 1px solid #1EAEDB;
+}
+
+footer {
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	height: 1%;
 	text-align: center;
 }
-header a {
-	text-align:right;
+
+a {
+	text-decoration: none;
 }
 
-section {
-        border-radius: 1em;
-        padding: 1em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%);
+a:hover {
+	text-decoration: underline;
 }

@@ -37,7 +37,7 @@ Then:
 Since uwsgi isn't fun to configure, feel free to slap this into your
 `/etc/uwsgi/apps-enabled/mat2-web.ini`:
 
-```
+```ini
 [uwsgi]
 module=main
 chdir = /var/www/mat2-web/
@@ -60,12 +60,12 @@ plugins = python3
 
 and this into your `/etc/nginx/site-enabled/mat2-web`:
 
-```
-        location / { try_files $uri @yourapplication; }
-        location @yourapplication {
-                include uwsgi_params;
-                uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
-        }
+```nginx
+location / { try_files $uri @yourapplication; }
+location @yourapplication {
+				include uwsgi_params;
+				uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
+}
 ```
 
 It should now be working.

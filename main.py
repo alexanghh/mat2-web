@@ -70,5 +70,5 @@ def upload_file():
     return render_template('index.html', mimetypes=mimetypes)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     app.run()

@@ -47,6 +47,15 @@ class FlaskrTestCase(unittest.TestCase):
                 rv.data)
         self.assertEqual(rv.status_code, 200)
 
+    def test_get_upload_no_file_name(self):
+        rv = self.app.post('/',
+                data=dict(
+                    file=(io.BytesIO(b"aaa"), ''),
+                    ), follow_redirects=True)
+        self.assertIn(b'No file part', rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+
     def test_get_upload_harmless_file(self):
         rv = self.app.post('/',
                 data=dict(

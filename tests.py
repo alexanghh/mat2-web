@@ -47,6 +47,20 @@ class FlaskrTestCase(unittest.TestCase):
                 rv.data)
         self.assertEqual(rv.status_code, 200)
 
+    def test_get_upload_harmless_file(self):
+        rv = self.app.post('/',
+                data=dict(
+                    file=(io.BytesIO(b"Some text"), 'test.txt'),
+                    ), follow_redirects=True)
+        self.assertIn(b'/download/test.cleaned.txt', rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+        rv = self.app.get('/download/test.cleaned.txt')
+        self.assertEqual(rv.status_code, 200)
+
+        rv = self.app.get('/download/test.cleaned.txt')
+        self.assertEqual(rv.status_code, 302)
+
 
 if __name__ == '__main__':
     unittest.main()

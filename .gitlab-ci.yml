@@ -24,5 +24,5 @@ tests:debian:
   script:
   - apt-get -qqy update
   - apt-get -qqy install --no-install-recommends mat2 python3-flask python3-coverage
-  - python3-coverage run --branch -m unittest discover
+  - python3-coverage run --branch --include main.py -m unittest discover
   - python3-coverage report -m

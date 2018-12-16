@@ -1,0 +1,28 @@
+image: debian:testing
+
+stages:
+  - linting
+  - test
+
+pyflakes:
+  stage: linting
+  script:
+  - apt-get -qqy update
+  - apt-get -qqy install --no-install-recommends pyflakes3
+  - pyflakes3 ./main.py
+
+mypy:
+  stage: linting
+  script:
+  - apt-get -qqy update
+  - apt-get -qqy install --no-install-recommends python3-pip
+  - pip3 install mypy
+  - mypy --ignore-missing-imports main.py
+
+tests:debian:
+  stage: test
+  script:
+  - apt-get -qqy update
+  - apt-get -qqy install --no-install-recommends mat2 python3-flask python3-coverage
+  - python3-coverage run --branch -m unittest discover
+  - python3-coverage report -m

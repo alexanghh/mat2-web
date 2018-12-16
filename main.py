@@ -1,6 +1,5 @@
 import os
 
-import libmat2
 from libmat2 import parser_factory
 
 from flask import Flask, flash, request, redirect, url_for, render_template

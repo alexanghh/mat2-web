@@ -35,10 +35,6 @@ def download_file(filename:str):
         return response
     return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
 
-@app.route('/about')
-def about():
-    return render_template('about.html', mimetypes=mimetypes)
-
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':

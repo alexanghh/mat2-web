@@ -69,3 +69,10 @@ location @yourapplication {
 ```
 
 It should now be working.
+
+# Licenses
+
+- mat2-web is under MIT
+- The [raleway](https://github.com/impallari/Raleway/) font is under OFL1.1
+- [normalize.css](https://github.com/necolas/normalize.css/) is under MIT
+- [skeleton](http://getskeleton.com/) is under MIT

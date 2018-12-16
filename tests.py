@@ -19,6 +19,11 @@ class FlaskrTestCase(unittest.TestCase):
         rv = self.app.get('/')
         self.assertIn(b'mat2-web', rv.data)
 
+    def test_check_mimetypes(self):
+        rv = self.app.get('/')
+        self.assertIn(b'application/zip', rv.data)
+        self.assertIn(b'audio/x-flac', rv.data)
+
     def test_get_download_dangerous_file(self):
         rv = self.app.get('/download/\..\filename')
         self.assertEqual(rv.status_code, 302)

@@ -30,8 +30,6 @@ Then:
 # git clone https://0xacab.org/jvoisin/mat2-web.git
 # mkdir ./mat2-web/uploads/
 # chown -R www-data:www-data ./mat2-web
-# service uwsgi start
-# service nginx start
 ```
 
 Since uwsgi isn't fun to configure, feel free to slap this into your
@@ -66,6 +64,25 @@ location @yourapplication {
 				include uwsgi_params;
 				uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
 }
+```
+
+If you prefer to use Apache:
+
+```
+apt install apache2 libapache2-mod-proxy-uwsgi
+```
+
+and add this to your `/etc/apache2/sites-enabled/mat2-web` in the `virtualhost` block:
+
+```Apache
+ProxyPass / unix:/var/www/mat2-web/mat2-web.sock|uwsgi://localhost/
+
+```
+
+Now restart your webserver (nginx or apache) and uswgi
+```
+systemctl restart uwsgi
+systemctl restart nginx
 ```
 
 It should now be working.

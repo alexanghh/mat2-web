@@ -36,6 +36,9 @@ def download_file(filename:str):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.mkdir(app.config['UPLOAD_FOLDER'])
+
     mimetypes = set()
     for parser in parser_factory._get_parsers():
         mimetypes = mimetypes | parser.mimetypes

@@ -66,7 +66,7 @@ location @yourapplication {
 }
 ```
 
-If you prefer to use Apache:
+Nginx is the recommended web engine, but you can also use Apache if you prefer:
 
 ```
 apt install apache2 libapache2-mod-proxy-uwsgi
@@ -79,10 +79,11 @@ ProxyPass / unix:/var/www/mat2-web/mat2-web.sock|uwsgi://localhost/
 
 ```
 
-Now restart your webserver (nginx or apache) and uswgi
+Finally, restart `uwsgi` and your web server:
+
 ```
 systemctl restart uwsgi
-systemctl restart nginx
+systemctl restart nginx/apache/…
 ```
 
 It should now be working.

@@ -11,6 +11,11 @@ This is an online version of [mat2](https://0xacab.org/jvoisin/mat2).
 Keep in mind that this is a beta version, don't rely on it for anything
 serious, yet.
 
+# Demo instance
+
+There is a demo instance deployed a [mat2-web.dustri.org](https://mat2-web.dustri.org).
+Please don't upload any sensitive files on it.
+
 # How to deploy it?
 
 Since mat2 isn't available in debian stable yet, you might want to add this to
@@ -61,8 +66,8 @@ and this into your `/etc/nginx/site-enabled/mat2-web`:
 ```nginx
 location / { try_files $uri @yourapplication; }
 location @yourapplication {
-				include uwsgi_params;
-				uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
+	include uwsgi_params;
+	uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
 }
 ```
 

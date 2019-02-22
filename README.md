@@ -93,6 +93,16 @@ systemctl restart nginx/apache/…
 
 It should now be working.
 
+# Threat model
+
+- An attacker in possession of the very same file that a user wants to clean,
+	along with its names, can perform a denial of service by continually
+	requesting this file, and getting it before the user.
+- An attacker in possession of only the name of a file that a user wants to
+	clean can't perform a denial of service attack, since the path to download
+	the cleaned file is not only dependant of the name, but also the content.
+- The server should do its very best to delete files as soon as possible.
+
 # Licenses
 
 - mat2-web is under MIT

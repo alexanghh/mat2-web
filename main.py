@@ -1,4 +1,6 @@
 import os
+import hashlib
+import hmac
 
 from libmat2 import parser_factory
 
@@ -13,19 +15,29 @@ app.config['SECRET_KEY'] = os.urandom(32)
 app.config['UPLOAD_FOLDER'] = './uploads/'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 
-mimetypes = 'image/jpeg, image/png'
+def __hash_file(filepath: str) -> str:
+    sha256 = hashlib.sha256()
+    with open(filepath, 'rb') as f:
+        while True:
+            data = f.read(65536)  # read the file by chunk of 64k
+            if not data:
+                break
+            sha256.update(data)
+    return sha256.hexdigest()
 
 
-@app.route('/download/<string:filename>')
-def download_file(filename:str):
+@app.route('/download/<string:key>/<string:filename>')
+def download_file(key:str, filename:str):
     if filename != secure_filename(filename):
-        flash('naughty naughty')
         return redirect(url_for('upload_file'))
 
     filepath = secure_filename(filename)
 
     complete_path = os.path.join(app.config['UPLOAD_FOLDER'], filepath)
     if not os.path.exists(complete_path):
+        return redirect(url_for('upload_file'))
+    if hmac.compare_digest(__hash_file(complete_path), key) is False:
+        print('hash: %s, key: %s' % (__hash_file(complete_path), key))
         return redirect(url_for('upload_file'))
 
     @after_this_request
@@ -72,7 +84,9 @@ def upload_file():
         meta_after = parser.get_meta()
         os.remove(filepath)
 
-        return render_template('download.html', mimetypes=mimetypes, meta=meta, filename=output_filename, meta_after=meta_after)
+        key = __hash_file(os.path.join(app.config['UPLOAD_FOLDER'], output_filename))
+
+        return render_template('download.html', mimetypes=mimetypes, meta=meta, filename=output_filename, meta_after=meta_after, key=key)
 
     return render_template('index.html', mimetypes=mimetypes)
 

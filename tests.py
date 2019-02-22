@@ -25,12 +25,17 @@ class FlaskrTestCase(unittest.TestCase):
         self.assertIn(b'audio/x-flac', rv.data)
 
     def test_get_download_dangerous_file(self):
-        rv = self.app.get('/download/\..\filename')
+        rv = self.app.get('/download/1337/\..\filename')
         self.assertEqual(rv.status_code, 302)
 
-    def test_get_download_nonexistant_file(self):
+    def test_get_download_without_key_file(self):
         rv = self.app.get('/download/non_existant')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_get_download_nonexistant_file(self):
+        rv = self.app.get('/download/1337/non_existant')
         self.assertEqual(rv.status_code, 302)
+
 
     def test_get_upload_without_file(self):
         rv = self.app.post('/')
@@ -66,13 +71,13 @@ class FlaskrTestCase(unittest.TestCase):
                 data=dict(
                     file=(io.BytesIO(b"Some text"), 'test.txt'),
                     ), follow_redirects=True)
-        self.assertIn(b'/download/test.cleaned.txt', rv.data)
+        self.assertIn(b'/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt', rv.data)
         self.assertEqual(rv.status_code, 200)
 
-        rv = self.app.get('/download/test.cleaned.txt')
+        rv = self.app.get('/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
         self.assertEqual(rv.status_code, 200)
 
-        rv = self.app.get('/download/test.cleaned.txt')
+        rv = self.app.get('/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
         self.assertEqual(rv.status_code, 302)
 
 

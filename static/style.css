@@ -39,3 +39,21 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+
+li {
+	margin-bottom: 0;
+}
+
+details > summary:before {
+	content: "▶ ";
+}
+details[open] > summary:before {
+	content: "▼ ";
+}
+
+.fakelink {
+	color: #1EAEDB;
+}
+.fakelink:hover {
+	text-decoration: underline;
+}

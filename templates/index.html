@@ -3,14 +3,22 @@
 
 <h2>» Remove metadata</h2>
 <p>
-Upload your image, get a <em>cleaned</em> one in response.<br>
-	<br>
+	Upload your file, get a <em>cleaned</em> one in response.
+	<br><br>
 	Please note that while we do not keep a copy of your image,<br>
 	there is no way that you could be certain about this: act accordingly.
 </p>
+<details>
+	<summary>Click <span class='fakelink'>here</span> so see the supported formats</summary>
+	<ul>
+		{% for mimetype in mimetypes %}
+		<li>{{ mimetype }}</li>
+		{% endfor %}
+	</ul>
+</details>
 <br>
 <form class='b' method=post enctype=multipart/form-data>
-	<input type=file name=file id="upload_file" accept="{{ mimetypes }}">
+	<input type=file name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
 	<input type=submit value=Upload>
 </form>
 {% endblock %}

@@ -30,59 +30,22 @@ Pin-Priority: 10
 Then:
 
 ```
-# apt install git nginx-light uwsgi uwsgi-plugin-python3 mat2 --no-install-recommends
+# apt install uwsgi uwsgi-plugin-python3 git mat2
+# apt install nginx-light  # if you prefer nginx
+# apt install apache2 libapache2-mod-proxy-uwsgi  # if you prefer Apache2
 # cd /var/www/
 # git clone https://0xacab.org/jvoisin/mat2-web.git
 # mkdir ./mat2-web/uploads/
 # chown -R www-data:www-data ./mat2-web
 ```
 
-Since uwsgi isn't fun to configure, feel free to slap this into your
-`/etc/uwsgi/apps-enabled/mat2-web.ini`:
+Since uwsgi isn't fun to configure, feel free to copy [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/uwsgi.config)
+to `/etc/uwsgi/apps-enabled/mat2-web.ini` and [this one](https://0xacab.org/jvoisin/mat2-web/tree/master/config/nginx.config)
+to `/etc/nginx/site-enabled/mat2-web`.
 
-```ini
-[uwsgi]
-module=main
-chdir = /var/www/mat2-web/
-callable = app
-wsgi-file = main.py
-master = true
-workers = 1
-
-uid = www-data
-gid = www-data
-
-# kill stalled processes
-harakiri = 30
-die-on-term = true
-
-socket = mat2-web.sock
-chmod-socket = 774
-plugins = python3
-```
-
-and this into your `/etc/nginx/site-enabled/mat2-web`:
-
-```nginx
-location / { try_files $uri @yourapplication; }
-location @yourapplication {
-	include uwsgi_params;
-	uwsgi_pass unix:/var/www/mat2-web/mat2-web.sock;
-}
-```
-
-Nginx is the recommended web engine, but you can also use Apache if you prefer:
-
-```
-apt install apache2 libapache2-mod-proxy-uwsgi
-```
-
-and add this to your `/etc/apache2/sites-enabled/mat2-web` in the `virtualhost` block:
-
-```Apache
-ProxyPass / unix:/var/www/mat2-web/mat2-web.sock|uwsgi://localhost/
-
-```
+Nginx is the recommended web engine, but you can also use Apache if you prefer,
+by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
+to your `/etc/apache2/sites-enabled/mat2-web` file.
 
 Finally, restart `uwsgi` and your web server:
 

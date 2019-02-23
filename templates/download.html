@@ -4,9 +4,9 @@
 <h2>» Metadata removed</h2>
 <p>
 {% if not meta_after %}
-mat2 managed to remove <b>all metadata</b> from your file.
+mat2 managed to remove <b>all metadata</b> from <pre>{{ filename }}</pre>.
 {% else %}
-mat2 <b>could not</b> remove all the metadata from your file, those are the remaining ones:
+mat2 <b>could not</b> remove all the metadata from <pre>{{ filename }}</pre>, those are the remaining ones:
 <ul>
 	{% for key, value in meta_after.items() %}
 	<li> <b>{{ key }}</b>: {{ value }}</li>

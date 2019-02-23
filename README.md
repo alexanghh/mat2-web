@@ -56,6 +56,10 @@ systemctl restart nginx/apache/…
 
 It should now be working.
 
+You should add `find /var/www/mat2-web/uploads/* -mtime +1 -exec rm {} \;`
+in a crontab to remove files that people might have uploaded but never
+downloaded.
+
 # Threat model
 
 - An attacker in possession of the very same file that a user wants to clean,

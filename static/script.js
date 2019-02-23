@@ -25,28 +25,54 @@
 		dropZone.classList.remove(hoverClassName);
 	});
 
-	// This is the most important event, the event that gives access to files
+	// Handle copy/paste
+	dropZone.addEventListener("paste", function (e) {
+		e.preventDefault();
+
+		if (e.clipboardData.items.length != 1) {
+			return
+		}
+
+		const item = e.clipboardData.items[0];
+		if (item.type.indexOf("image") == -1) {
+			return;
+		}
+
+		fetch('/', {
+			method: 'POST',
+			body: item.getAsFile(),
+		})
+			.then(response => response.text())
+			.then(body => {  // Yes, this is ugly
+				document.open()
+				document.write(body)
+				document.close()
+			})
+
+	});
+
 	dropZone.addEventListener("drop", function (e) {
 		e.preventDefault();
 		dropZone.classList.remove(hoverClassName);
 
 		const files = Array.from(e.dataTransfer.files);
-		if (files.length > 0) {
-			const data = new FormData();
-			for (const file of files) {
-				data.append('file', file);
-			}
-
-			fetch('/', {
-				method: 'POST',
-				body: data,
-			})
-				.then(response => response.text())
-				.then(body => {  // Yes, this is ugly
-					document.open()
-					document.write(body)
-					document.close()
-				})
+		if (files.length != 1 ) {
+			return;
 		}
+		const data = new FormData();
+		for (const file of files) {
+			data.append('file', file);
+		}
+
+		fetch('/', {
+			method: 'POST',
+			body: data,
+		})
+			.then(response => response.text())
+			.then(body => {  // Yes, this is ugly
+				document.open()
+				document.write(body)
+				document.close()
+			})
 	});
 })();

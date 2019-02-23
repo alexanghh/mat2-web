@@ -57,3 +57,7 @@ details[open] > summary:before {
 .fakelink:hover {
 	text-decoration: underline;
 }
+
+.hover {
+	background-color: #f1f1f1;
+}

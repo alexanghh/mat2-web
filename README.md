@@ -79,6 +79,12 @@ collector cronjob to remove leftover files . Besides, it can create a
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.
 
+# Custom templates
+
+You can override the default templates from `templates/` by putting replacements
+into the directory path that's configured in `app.config['CUSTOM_TEMPLATES_DIR']`
+(default `custom_templates/`).
+
 # Threat model
 
 - An attacker in possession of the very same file that a user wants to clean,

@@ -6,6 +6,7 @@ from libmat2 import parser_factory
 
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask import send_from_directory, after_this_request
+import jinja2
 
 from werkzeug.utils import secure_filename
 
@@ -14,6 +15,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
 app.config['UPLOAD_FOLDER'] = './uploads/'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
+
+app.jinja_loader = jinja2.ChoiceLoader([ # type: ignore
+    jinja2.FileSystemLoader(app.config['CUSTOM_TEMPLATES_DIR']),
+    app.jinja_loader,
+    ])
 
 def __hash_file(filepath: str) -> str:
     sha256 = hashlib.sha256()

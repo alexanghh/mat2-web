@@ -56,9 +56,20 @@ systemctl restart nginx/apache/…
 
 It should now be working.
 
-You should add `find /var/www/mat2-web/uploads/* -mtime +1 -exec rm {} \;`
+You should add `find /var/www/mat2-web/uploads/ -type f -mtime +1 -exec rm {} \;`
 in a crontab to remove files that people might have uploaded but never
 downloaded.
+
+# Deploy via Ansible
+
+If you happen to use Ansible, there's an Ansible role to deploy mat2-web on
+Debian: [ansible-role-mat2-web](https://github.com/systemli/ansible-role-mat2-web)
+
+The role install mat2-web as uWSGI service (run as dedicated system user),
+installs bubblewrap for mat2 sandboxing and creates a garbage collector
+cronjob to remove leftover files . Besides, it supports to create a dm-crypt
+volume with random key for the uploads folder in order to protect the uploaded
+files.
 
 # Threat model
 

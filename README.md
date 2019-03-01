@@ -1,11 +1,11 @@
 ```
-                  _   ___                     _     
-                 | | |__ \                   | |    
-  _ __ ___   __ _| |_   ) |_______      _____| |__    Trashing your meta,
- | '_ ` _ \ / _` | __| / /______\ \ /\ / / _ \ '_ \     keeping your data,
- | | | | | | (_| | |_ / /_       \ V  V /  __/ |_) |      within your browser.
- |_| |_| |_|\__,_|\__|____|       \_/\_/ \___|_.__/ 
- ```
+                 _   ___                     _     
+                | | |__ \                   | |    
+ _ __ ___   __ _| |_   ) | ___ __      _____| |__   Trashing your meta,
+| '_ ` _ \ / _` | __| / / |___|\ \ /\ / / _ \ '_ \    keeping your data,
+| | | | | | (_| | |_ / /_       \ V  V /  __/ |_) |     within your browser.
+|_| |_| |_|\__,_|\__|____|       \_/\_/ \___|_.__/ 
+```
 
 This is an online version of [mat2](https://0xacab.org/jvoisin/mat2).
 Keep in mind that this is a beta version, don't rely on it for anything
@@ -18,8 +18,10 @@ Please don't upload any sensitive files on it.
 
 # How to deploy it?
 
-Since mat2 isn't available in debian stable yet, you might want to add this to
-/etc/apt/preferences.d/ to be able to install `mat2` via apt.
+Since mat2 isn't available in Debian stable
+[yet](https://0xacab.org/jvoisin/mat2/issues/76), you might want to add the
+following to your `/etc/apt/preferences.d/` to be able to install `mat2` 
+via apt:
 
 ```
 Package: *
@@ -39,15 +41,18 @@ Then:
 # chown -R www-data:www-data ./mat2-web
 ```
 
-Since uwsgi isn't fun to configure, feel free to copy [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/uwsgi.config)
-to `/etc/uwsgi/apps-enabled/mat2-web.ini` and [this one](https://0xacab.org/jvoisin/mat2-web/tree/master/config/nginx.config)
+Since [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) isn't fun to
+configure, feel free to copy
+[this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/uwsgi.config)
+to `/etc/uwsgi/apps-enabled/mat2-web.ini` and
+[this one](https://0xacab.org/jvoisin/mat2-web/tree/master/config/nginx.config)
 to `/etc/nginx/site-enabled/mat2-web`.
 
 Nginx is the recommended web engine, but you can also use Apache if you prefer,
 by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
 to your `/etc/apache2/sites-enabled/mat2-web` file.
 
-Finally, restart `uwsgi` and your web server:
+Finally, restart uWSGI and your web server:
 
 ```
 systemctl restart uwsgi
@@ -62,14 +67,17 @@ downloaded.
 
 # Deploy via Ansible
 
-If you happen to use Ansible, there's an Ansible role to deploy mat2-web on
-Debian: [ansible-role-mat2-web](https://github.com/systemli/ansible-role-mat2-web)
+If you happen to be using [Ansible](https://www.ansible.com/), there's an
+Ansible role to deploy mat2-web on Debian, thanks to the amazing
+[systemli](https://www.systemli.org/en/index.html) people:
+[ansible-role-mat2-web](https://github.com/systemli/ansible-role-mat2-web)
 
-The role install mat2-web as uWSGI service (run as dedicated system user),
-installs bubblewrap for mat2 sandboxing and creates a garbage collector
-cronjob to remove leftover files . Besides, it supports to create a dm-crypt
-volume with random key for the uploads folder in order to protect the uploaded
-files.
+The role installs mat2-web as a uWSGI service, and runs it as a dedicated
+system user, installs bubblewrap to sandbox mat2 sandboxing and creates a garbage
+collector cronjob to remove leftover files . Besides, it can create a
+[dm-crypt](https://en.wikipedia.org/wiki/Dm-crypt) volume with random key for
+the uploads folder, to ensure that the uploaded files won't be recoverable
+between reboots.
 
 # Threat model
 

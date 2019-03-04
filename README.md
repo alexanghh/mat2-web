@@ -92,7 +92,7 @@ into the directory path that's configured in `app.config['CUSTOM_TEMPLATES_DIR']
 	requesting this file, and getting it before the user.
 - An attacker in possession of only the name of a file that a user wants to
 	clean can't perform a denial of service attack, since the path to download
-	the cleaned file is not only dependant of the name, but also the content.
+	the cleaned file is not only dependent of the name, but also the content.
 - The server should do its very best to delete files as soon as possible.
 
 # Licenses

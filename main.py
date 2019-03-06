@@ -1,6 +1,7 @@
 import os
 import hashlib
 import hmac
+import mimetypes as mtype
 
 from libmat2 import parser_factory
 
@@ -60,7 +61,9 @@ def upload_file():
 
     mimetypes = set()
     for parser in parser_factory._get_parsers():
-        mimetypes = mimetypes | parser.mimetypes
+        mimetypes |= set(map(mtype.guess_extension, parser.mimetypes))
+    # since `guess_extension` might return `None`, we need to filter it out
+    mimetypes = sorted(filter(None, mimetypes))
 
     if request.method == 'POST':
         if 'file' not in request.files: # check if the post request has the file part

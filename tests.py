@@ -21,8 +21,8 @@ class FlaskrTestCase(unittest.TestCase):
 
     def test_check_mimetypes(self):
         rv = self.app.get('/')
-        self.assertIn(b'application/zip', rv.data)
-        self.assertIn(b'audio/x-flac', rv.data)
+        self.assertIn(b'.torrent', rv.data)
+        self.assertIn(b'.ods', rv.data)
 
     def test_get_download_dangerous_file(self):
         rv = self.app.get('/download/1337/\..\filename')

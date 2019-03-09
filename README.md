@@ -14,7 +14,7 @@ serious, yet.
 # Demo instance
 
 There is a demo instance deployed a [mat2-web.dustri.org](https://mat2-web.dustri.org).
-Please don't upload any sensitive files on it.
+Please don't upload any sensitive files to it.
 
 # How to deploy it?
 
@@ -73,8 +73,8 @@ Ansible role to deploy mat2-web on Debian, thanks to the amazing
 [ansible-role-mat2-web](https://github.com/systemli/ansible-role-mat2-web)
 
 The role installs mat2-web as a uWSGI service, and runs it as a dedicated
-system user, installs bubblewrap to sandbox mat2 sandboxing and creates a garbage
-collector cronjob to remove leftover files . Besides, it can create a
+system user, installs bubblewrap to sandbox mat2 and creates a garbage
+collector cronjob to remove leftover files. Besides, it can create a
 [dm-crypt](https://en.wikipedia.org/wiki/Dm-crypt) volume with random key for
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.

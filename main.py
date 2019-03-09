@@ -98,7 +98,8 @@ def upload_file():
 
         return render_template('download.html', mimetypes=mimetypes, meta=meta, filename=output_filename, meta_after=meta_after, key=key)
 
-    return render_template('index.html', mimetypes=mimetypes)
+    max_file_size = int(app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024)
+    return render_template('index.html', max_file_size=max_file_size, mimetypes=mimetypes)
 
 
 if __name__ == '__main__':  # pragma: no cover

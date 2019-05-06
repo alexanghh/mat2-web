@@ -85,7 +85,7 @@ def upload_file():
         meta = parser.get_meta()
 
         if parser.remove_all() is not True:
-            flash('Unable to clean ' % mime)
+            flash('Unable to clean %s' % mime)
             return redirect(url_for('upload_file'))
         output_filename = os.path.basename(parser.output_filename)
 

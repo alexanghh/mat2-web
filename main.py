@@ -61,7 +61,8 @@ def upload_file():
 
     mimetypes = set()
     for parser in parser_factory._get_parsers():
-        mimetypes |= set(map(mtype.guess_extension, parser.mimetypes))
+        for m in parser.mimetypes:
+            mimetypes |= set(mtype.guess_all_extensions(m, strict=False))
     # since `guess_extension` might return `None`, we need to filter it out
     mimetypes = sorted(filter(None, mimetypes))
 

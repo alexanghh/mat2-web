@@ -79,6 +79,12 @@ collector cronjob to remove leftover files. Besides, it can create a
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.
 
+# Development
+Install docker and docker-compose and then run `docker-compose up` to setup
+the docker dev environment. Mat2-web is now accessible on your host machine at `localhost:5000`.
+Every code change triggers a restart of the app. 
+If you want to add/remove dependencies you have to rebuild the container.
+
 # Custom templates
 
 You can override the default templates from `templates/` by putting replacements

@@ -1,0 +1,12 @@
+version: '2'
+services:
+    web:
+        build: .
+        environment:
+            - FLASK_APP=main.py
+            - FLASK_ENV=development
+        ports:
+            - "5000:5000"
+        volumes:
+            - .:/mat2-web
+        restart: always

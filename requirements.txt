@@ -3,3 +3,5 @@ ffmpeg==1.4
 bubblewrap==1.2.0
 mat2==0.9.0
 flask==1.0.3
+Flask-RESTful==0.3.7
+Flask-Cors==3.0.8

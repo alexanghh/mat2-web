@@ -2,18 +2,24 @@ import unittest
 import tempfile
 import shutil
 import io
+import os
 
 import main
 
 
-class FlaskrTestCase(unittest.TestCase):
+class Mat2WebTestCase(unittest.TestCase):
     def setUp(self):
-        main.app.testing = True
-        main.app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
-        self.app = main.app.test_client()
+        os.environ.setdefault('MAT2_ALLOW_ORIGIN_WHITELIST', 'origin1.gnu origin2.gnu')
+        app = main.create_app()
+        self.upload_folder = tempfile.mkdtemp()
+        app.config.update(
+            TESTING=True,
+            UPLOAD_FOLDER=self.upload_folder
+        )
+        self.app = app.test_client()
 
     def tearDown(self):
-        shutil.rmtree(main.app.config['UPLOAD_FOLDER'])
+        shutil.rmtree(self.upload_folder)
 
     def test_get_root(self):
         rv = self.app.get('/')
@@ -35,7 +41,6 @@ class FlaskrTestCase(unittest.TestCase):
     def test_get_download_nonexistant_file(self):
         rv = self.app.get('/download/1337/non_existant')
         self.assertEqual(rv.status_code, 302)
-
 
     def test_get_upload_without_file(self):
         rv = self.app.post('/')
@@ -60,11 +65,10 @@ class FlaskrTestCase(unittest.TestCase):
     def test_get_upload_no_file_name(self):
         rv = self.app.post('/',
                 data=dict(
-                    file=(io.BytesIO(b"aaa"), ''),
+                    file=(io.BytesIO(b"aaa")),
                     ), follow_redirects=True)
         self.assertIn(b'No file part', rv.data)
         self.assertEqual(rv.status_code, 200)
-
 
     def test_get_upload_harmless_file(self):
         rv = self.app.post('/',
@@ -73,11 +77,24 @@ class FlaskrTestCase(unittest.TestCase):
                     ), follow_redirects=True)
         self.assertIn(b'/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt', rv.data)
         self.assertEqual(rv.status_code, 200)
+        self.assertNotIn('Access-Control-Allow-Origin', rv.headers)
 
         rv = self.app.get('/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
         self.assertEqual(rv.status_code, 200)
 
         rv = self.app.get('/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_upload_wrong_hash(self):
+        rv = self.app.post('/',
+                           data=dict(
+                               file=(io.BytesIO(b"Some text"), 'test.txt'),
+                           ), follow_redirects=True)
+        self.assertIn(b'/download/4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt',
+                      rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+        rv = self.app.get('/download/70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
         self.assertEqual(rv.status_code, 302)
 
 

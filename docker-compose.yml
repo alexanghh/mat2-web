@@ -5,6 +5,7 @@ services:
         environment:
             - FLASK_APP=main.py
             - FLASK_ENV=development
+            - MAT2_ALLOW_ORIGIN_WHITELIST=*
         ports:
             - "5000:5000"
         volumes:

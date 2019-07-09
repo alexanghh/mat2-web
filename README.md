@@ -52,6 +52,11 @@ Nginx is the recommended web engine, but you can also use Apache if you prefer,
 by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
 to your `/etc/apache2/sites-enabled/mat2-web` file.
 
+Then configure the environment variable: `MAT2_ALLOW_ORIGIN_WHITELIST=https://myhost1.org https://myhost2.org`
+Note that you can add multiple hosts from which you want to accept API requests. These need to be separated by
+a space.
+**IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
+
 Finally, restart uWSGI and your web server:
 
 ```
@@ -84,6 +89,63 @@ Install docker and docker-compose and then run `docker-compose up` to setup
 the docker dev environment. Mat2-web is now accessible on your host machine at `localhost:5000`.
 Every code change triggers a restart of the app. 
 If you want to add/remove dependencies you have to rebuild the container.
+
+# RESTful API
+
+## Upload Endpoint
+
+**Endpoint:** `/api/upload`
+
+**HTTP Verbs:**  POST
+
+**Body:** 
+```json
+{
+	"file_name": "my-filename.jpg",
+	"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+}
+```
+
+The `file_name` parameter takes the file name.
+The `file` parameter is the base64 encoded file which will be cleaned.
+
+**Example Response:**
+```json
+{
+    "output_filename": "fancy.cleaned.jpg",
+    "key": "81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161",
+    "meta": {
+        "BitDepth": 8,
+        "ColorType": "RGB with Alpha",
+        "Compression": "Deflate/Inflate",
+        "Filter": "Adaptive",
+        "Interlace": "Noninterlaced"
+    },
+    "meta_after": {},
+    "download_link": "http://localhost:5000/download/81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/fancy.cleaned.jpg"
+}
+```
+
+## Supported Extensions Endpoint
+
+**Endpoint:** `/api/extension`
+
+**HTTP Verbs:**  GET
+
+**Example Response (shortened):**
+```json
+[
+    ".asc",
+    ".avi",
+    ".bat",
+    ".bmp",
+    ".brf",
+    ".c",
+    ".css",
+    ".docx",
+    ".epub"
+]
+```
 
 # Custom templates
 

@@ -18,18 +18,7 @@ Please don't upload any sensitive files to it.
 
 # How to deploy it?
 
-Since mat2 isn't available in Debian stable
-[yet](https://0xacab.org/jvoisin/mat2/issues/76), you might want to add the
-following to your `/etc/apt/preferences.d/` to be able to install `mat2` 
-via apt:
-
-```
-Package: *
-Pin: release o=Debian,a=unstable
-Pin-Priority: 10
-```
-
-Then:
+mat2 is available in [Debian stable](https://packages.debian.org/stable/mat2).
 
 ```
 # apt install uwsgi uwsgi-plugin-python3 git mat2

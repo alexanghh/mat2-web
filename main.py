@@ -147,6 +147,7 @@ def create_app(test_config=None):
             key, meta_after, output_filename = cleanup(parser, filepath)
             return {
                 'output_filename': output_filename,
+                'mime': mime,
                 'key': key,
                 'meta': meta,
                 'meta_after': meta_after,

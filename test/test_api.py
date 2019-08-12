@@ -37,6 +37,7 @@ class Mat2APITestCase(unittest.TestCase):
         data = json.loads(request.data.decode('utf-8'))
         expected  = {
             'output_filename': 'test_name.cleaned.jpg',
+            'mime': 'image/jpeg',
             'key': '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161',
             'meta': {
                 'BitDepth': 8,

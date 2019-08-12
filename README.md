@@ -102,6 +102,7 @@ The `file` parameter is the base64 encoded file which will be cleaned.
 ```json
 {
     "output_filename": "fancy.cleaned.jpg",
+    "mime": "image/jpg",
     "key": "81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161",
     "meta": {
         "BitDepth": 8,

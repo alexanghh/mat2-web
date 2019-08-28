@@ -35,7 +35,7 @@ configure, feel free to copy
 [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/uwsgi.config)
 to `/etc/uwsgi/apps-enabled/mat2-web.ini` and
 [this one](https://0xacab.org/jvoisin/mat2-web/tree/master/config/nginx.config)
-to `/etc/nginx/site-enabled/mat2-web`.
+to `/etc/nginx/sites-enabled/mat2-web`.
 
 Nginx is the recommended web engine, but you can also use Apache if you prefer,
 by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
@@ -72,6 +72,18 @@ collector cronjob to remove leftover files. Besides, it can create a
 [dm-crypt](https://en.wikipedia.org/wiki/Dm-crypt) volume with random key for
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.
+
+
+# Deploy using Docker
+You can find the ready to run docker image here: 
+https://0xacab.org/jvoisin/mat2-web/container_registry
+
+Example: 
+`docker run -p 80:80 -d -e MAT2_ALLOW_ORIGIN_WHITELIST='https://myhost1.org' registry.0xacab.org/jvoisin/mat2-web:latest`
+
+Make sure to add 
+`find /var/www/mat2-web/uploads/ -type f -mtime +1 -exec rm {} \;` as cron job
+run inside the container.
 
 # Development
 Install docker and docker-compose and then run `docker-compose up` to setup
@@ -136,6 +148,13 @@ The `file` parameter is the base64 encoded file which will be cleaned.
     ".epub"
 ]
 ```
+
+# Docker
+There are two Dockerfiles present in this repository. The file called `Dockerfile.development` is used for development 
+and `Dockerfile.production` is used for production deployments.
+
+You can find the automated docker builds in the registry of this 
+repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 
 # Custom templates
 

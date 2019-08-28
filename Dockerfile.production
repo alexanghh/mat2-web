@@ -1,0 +1,24 @@
+From debian:buster-slim
+WORKDIR /var/www/mat2-web
+COPY . /var/www/mat2-web
+RUN apt-get update \
+&&  apt-get install --no-install-recommends --no-install-suggests --yes \
+    systemd \
+    mat2 \
+    uwsgi \
+    uwsgi-plugin-python3 \
+    nginx-light \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+&&  rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
+&&  pip3 install -r requirements.txt \
+&&  mkdir ./uploads \
+&&  chown -R www-data:www-data . \
+&&  cp ./config/uwsgi.config /etc/uwsgi/apps-enabled/mat2-web.ini \
+&&  rm /etc/nginx/sites-enabled/default \
+&&  mkdir -p /etc/nginx/sites-enabled/ \
+&&  cp ./config/nginx.config /etc/nginx/sites-enabled/mat2.conf \
+&&  chmod +x ./startup-server.sh
+
+CMD ["./startup-server.sh"]

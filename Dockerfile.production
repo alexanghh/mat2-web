@@ -18,7 +18,6 @@ RUN apt-get update \
 &&  cp ./config/uwsgi.config /etc/uwsgi/apps-enabled/mat2-web.ini \
 &&  rm /etc/nginx/sites-enabled/default \
 &&  mkdir -p /etc/nginx/sites-enabled/ \
-&&  cp ./config/nginx.config /etc/nginx/sites-enabled/mat2.conf \
-&&  chmod +x ./startup-server.sh
+&&  cp ./config/nginx.config /etc/nginx/sites-enabled/mat2.conf
 
-CMD ["./startup-server.sh"]
+CMD ["sh", "-c", "/etc/init.d/nginx restart; uwsgi --ini /etc/uwsgi/apps-enabled/mat2-web.ini"]

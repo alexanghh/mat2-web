@@ -1,8 +1,8 @@
 import unittest
 import tempfile
-import shutil
 import json
 import os
+import shutil
 
 import main
 
@@ -35,7 +35,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 200)
 
         data = json.loads(request.data.decode('utf-8'))
-        expected  = {
+        expected = {
             'output_filename': 'test_name.cleaned.jpg',
             'mime': 'image/jpeg',
             'key': '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161',
@@ -150,6 +150,199 @@ class Mat2APITestCase(unittest.TestCase):
 
         request = self.app.get(data['download_link'])
         self.assertEqual(request.status_code, 200)
+
+        request = self.app.get(data['download_link'])
+        self.assertEqual(request.status_code, 404)
+
+    def test_api_bulk_download(self):
+        request = self.app.post('/api/upload',
+                                data='{"file_name": "test_name.jpg", '
+                                     '"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAf'
+                                     'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
+                                headers={'content-type': 'application/json'}
+                                )
+        self.assertEqual(request.status_code, 200)
+        upload_one = json.loads(request.data.decode('utf-8'))
+
+        request = self.app.post('/api/upload',
+                                data='{"file_name": "test_name_two.jpg", '
+                                     '"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42'
+                                     'mO0vqpQDwAENAGxOnU0jQAAAABJRU5ErkJggg=="}',
+                                headers={'content-type': 'application/json'}
+                                )
+        self.assertEqual(request.status_code, 200)
+        upload_two = json.loads(request.data.decode('utf-8'))
+
+        post_body = {
+            u'download_list': [
+                {
+                    u'file_name': upload_one['output_filename'],
+                    u'key': upload_one['key']
+                },
+                {
+                    u'file_name': upload_two['output_filename'],
+                    u'key': upload_two['key']
+                }
+            ]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+
+        response = json.loads(request.data.decode('utf-8'))
+        self.assertEqual(request.status_code, 201)
+
+        self.assertIn(
+            "http://localhost/api/download/",
+            response['download_link']
+        )
+        self.assertIn(
+            ".cleaned.zip",
+            response['download_link']
+        )
+
+        self.assertIn('files.', response['output_filename'])
+        self.assertIn('cleaned.zip', response['output_filename'])
+        self.assertIn(response['mime'], 'application/zip')
+        self.assertEqual(response['meta_after'], {})
+
+        request = self.app.get(response['download_link'])
+        self.assertEqual(request.status_code, 200)
+
+        request = self.app.get(response['download_link'])
+        self.assertEqual(request.status_code, 404)
+
+    def test_api_bulk_download_validation(self):
+        post_body = {
+            u'download_list': [
+                {
+                    u'file_name': 'invalid_file_name',
+                    u'key': 'invalid_key'
+                }
+            ]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+
+        response = json.loads(request.data.decode('utf-8'))
+        self.assertEqual(response['message']['download_list'][0], 'min length is 2')
+        self.assertEqual(request.status_code, 400)
+
+        post_body = {
+            u'download_list': [
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                },
+                {
+                    u'file_name': 'test.jpg',
+                    u'key': 'key'
+                }
+            ]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+
+        response = json.loads(request.data.decode('utf-8'))
+        self.assertEqual(response['message']['download_list'][0], 'max length is 10')
+        self.assertEqual(request.status_code, 400)
+
+        post_body = {
+            u'download_list': [
+                {
+                    u'file_name_x': 'invalid_file_name',
+                    u'key_x': 'invalid_key'
+                },
+                {
+                    u'file_name_x': 'invalid_file_name',
+                    u'key_x': 'invalid_key'
+                }
+            ]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+
+        response = json.loads(request.data.decode('utf-8'))
+        expected = {
+            'message': {
+                'download_list': [
+                    {
+                        '0': [{
+                            'file_name_x': ['unknown field'],
+                            'key_x': ['unknown field']
+                        }],
+                        '1': [{
+                            'file_name_x': ['unknown field'],
+                            'key_x': ['unknown field']
+                        }]
+                    }
+                ]
+            }
+        }
+        self.assertEqual(response, expected)
+        self.assertEqual(request.status_code, 400)
+
+        post_body = {
+            u'download_list': [
+                {
+                    u'file_name': 'invalid_file_name1',
+                    u'key': 'invalid_key1'
+                },
+                {
+                    u'file_name': 'invalid_file_name2',
+                    u'key': 'invalid_key2'
+                }
+            ]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+        response = json.loads(request.data.decode('utf-8'))
+        self.assertEqual('File not found', response['message'])
 
 
 if __name__ == '__main__':

@@ -1,12 +1,15 @@
 import os
 import hmac
 import mimetypes as mtype
+from uuid import uuid4
 import jinja2
 import base64
 import io
 import binascii
-import utils
+import zipfile
 
+from cerberus import Validator
+import utils
 from libmat2 import parser_factory
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, after_this_request
 from flask_restful import Resource, Api, reqparse, abort
@@ -119,6 +122,19 @@ def create_app(test_config=None):
         complete_path = os.path.join(app.config['UPLOAD_FOLDER'], filepath)
         return complete_path, filepath
 
+    def is_valid_api_download_file(filename, key):
+        if filename != secure_filename(filename):
+            abort(400, message='Insecure filename')
+
+        complete_path, filepath = get_file_paths(filename)
+
+        if not os.path.exists(complete_path):
+            abort(404, message='File not found')
+
+        if hmac.compare_digest(utils.hash_file(complete_path), key) is False:
+            abort(400, message='The file hash does not match')
+        return complete_path, filepath
+
     class APIUpload(Resource):
 
         def post(self):
@@ -145,30 +161,18 @@ def create_app(test_config=None):
                 abort(500, message='Unable to clean %s' % mime)
 
             key, meta_after, output_filename = cleanup(parser, filepath)
-            return {
-                'output_filename': output_filename,
-                'mime': mime,
-                'key': key,
-                'meta': meta,
-                'meta_after': meta_after,
-                'download_link':  urljoin(request.host_url, '%s/%s/%s/%s' % ('api', 'download', key, output_filename))
-            }
+            return utils.return_file_created_response(
+                output_filename,
+                mime,
+                key,
+                meta,
+                meta_after,
+                urljoin(request.host_url, '%s/%s/%s/%s' % ('api', 'download', key, output_filename))
+            )
 
     class APIDownload(Resource):
         def get(self, key: str, filename: str):
-
-            if filename != secure_filename(filename):
-                abort(400, message='Insecure filename')
-
-            complete_path, filepath = get_file_paths(filename)
-
-            if not os.path.exists(complete_path):
-                abort(404, message='File not found')
-                return redirect(url_for('upload_file'))
-
-            if hmac.compare_digest(utils.hash_file(complete_path), key) is False:
-                abort(400, message='The file hash does not match')
-                return redirect(url_for('upload_file'))
+            complete_path, filepath = is_valid_api_download_file(filename, key)
 
             @after_this_request
             def remove_file(response):
@@ -177,15 +181,71 @@ def create_app(test_config=None):
 
             return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
 
-    class APIMSupportedExtensions(Resource):
+    class APIBulkDownloadCreator(Resource):
+        schema = {
+            'download_list': {
+                'type': 'list',
+                'minlength': 2,
+                'maxlength': int(os.environ.get('MAT2_MAX_FILES_BULK_DOWNLOAD', 10)),
+                'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'key': {'type': 'string'},
+                        'file_name': {'type': 'string'}
+                    }
+                }
+            }
+        }
+        v = Validator(schema)
+
+        def post(self):
+            utils.check_upload_folder(app.config['UPLOAD_FOLDER'])
+            data = request.json
+            if not self.v.validate(data):
+                abort(400, message=self.v.errors)
+            # prevent the zip file from being overwritten
+            zip_filename = 'files.' + str(uuid4()) + '.zip'
+            zip_path = os.path.join(app.config['UPLOAD_FOLDER'], zip_filename)
+            cleaned_files_zip = zipfile.ZipFile(zip_path, 'w')
+            with cleaned_files_zip:
+                for file_candidate in data['download_list']:
+                    complete_path, file_path = is_valid_api_download_file(
+                        file_candidate['file_name'],
+                        file_candidate['key']
+                    )
+                    try:
+                        cleaned_files_zip.write(complete_path)
+                    except ValueError:
+                        abort(400, message='Creating the archive failed')
+
+                try:
+                    cleaned_files_zip.testzip()
+                except ValueError as e:
+                    abort(400, message=str(e))
+
+            parser, mime = get_file_parser(zip_path)
+            if not parser.remove_all():
+                abort(500, message='Unable to clean %s' % mime)
+            key, meta_after, output_filename = cleanup(parser, zip_path)
+            return {
+                'output_filename': output_filename,
+                'mime': mime,
+                'key': key,
+                'meta_after': meta_after,
+                'download_link': urljoin(request.host_url, '%s/%s/%s/%s' % ('api', 'download', key, output_filename))
+            }, 201
+
+    class APISupportedExtensions(Resource):
         def get(self):
             return get_supported_extensions()
 
     api.add_resource(APIUpload, '/api/upload')
     api.add_resource(APIDownload, '/api/download/<string:key>/<string:filename>')
-    api.add_resource(APIMSupportedExtensions, '/api/extension')
+    api.add_resource(APIBulkDownloadCreator, '/api/download/bulk')
+    api.add_resource(APISupportedExtensions, '/api/extension')
 
     return app
+
 
 app = create_app()
 

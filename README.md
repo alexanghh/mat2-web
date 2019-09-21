@@ -46,6 +46,11 @@ Note that you can add multiple hosts from which you want to accept API requests.
 a space.
 **IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
 
+Configure another environment variable: `MAT2_MAX_FILES_BULK_DOWNLOAD=10`
+
+This specifies the max number of files that can be bulk downloaded using the api.
+Note: Each file has a max file size of 16mb
+
 Finally, restart uWSGI and your web server:
 
 ```
@@ -147,6 +152,41 @@ The `file` parameter is the base64 encoded file which will be cleaned.
     ".docx",
     ".epub"
 ]
+```
+
+**Endpoint:** `/api/download/bulk`
+
+This endpoint allows you to bulk download several files
+which you uploaded beforehand. Note that the `download_list`
+MUST contain more than two files. The max length is configurable
+(default is 10).
+
+**HTTP Verbs:**  POST
+
+**Body:** 
+```json
+{
+  "download_list": [
+    {
+        "file_name": "uploaded_file_name.jpg",
+        "key": "uploaded_file_key"
+    }
+  ]
+}
+```
+
+The `file_name` parameter takes the file name from a previously uploaded file.
+The `key` parameter is the key from a previously uploaded file.
+
+**Example Response:**
+```json
+{
+    "output_filename": "files.2cd225d5-2d75-44a2-9f26-e120a87e4279.cleaned.zip",
+    "mime": "application/zip",
+    "key": "5ee4cf8821226340d3d5ed16bd2e1b435234a9ad218f282b489a85d116e7a4c4",
+    "meta_after": {},
+    "download_link": "http://localhost/api/download/5ee4cf8821226340d3d5ed16bd2e1b435234a9ad218f282b489a85d116e7a4c4/files.2cd225d5-2d75-44a2-9f26-e120a87e4279.cleaned.zip"
+}
 ```
 
 # Docker

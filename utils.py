@@ -20,3 +20,14 @@ def hash_file(filepath: str) -> str:
 def check_upload_folder(upload_folder):
     if not os.path.exists(upload_folder):
         os.mkdir(upload_folder)
+
+
+def return_file_created_response(output_filename, mime, key, meta, meta_after, download_link):
+    return {
+        'output_filename': output_filename,
+        'mime': mime,
+        'key': key,
+        'meta': meta,
+        'meta_after': meta_after,
+        'download_link': download_link
+    }

@@ -1,9 +1,9 @@
 image: debian:testing
 
 stages:
-  - build
   - linting
   - test
+  - build_container
 
 variables:
   CONTAINER_TEST_IMAGE: registry.0xacab.org/jvoisin/mat2-web:$CI_BUILD_REF_NAME
@@ -35,7 +35,7 @@ tests:debian:
   - python3-coverage report -m
 
 build-docker:
-  stage: build
+  stage: build_container
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]

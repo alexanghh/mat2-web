@@ -3,6 +3,9 @@ import tempfile
 import json
 import os
 import shutil
+import zipfile
+
+from six import BytesIO
 
 import main
 
@@ -208,9 +211,19 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(response['meta_after'], {})
 
         request = self.app.get(response['download_link'])
+        zip_response = zipfile.ZipFile(BytesIO(request.data))
+        self.assertEquals(2, len(zip_response.namelist()))
+        for name in zip_response.namelist():
+            self.assertIn('.cleaned.jpg', name)
         self.assertEqual(request.status_code, 200)
 
         request = self.app.get(response['download_link'])
+        self.assertEqual(request.status_code, 404)
+
+        request = self.app.get(upload_one['download_link'])
+        self.assertEqual(request.status_code, 404)
+
+        request = self.app.get(upload_two['download_link'])
         self.assertEqual(request.status_code, 404)
 
     def test_api_bulk_download_validation(self):

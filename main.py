@@ -215,6 +215,7 @@ def create_app(test_config=None):
                     )
                     try:
                         cleaned_files_zip.write(complete_path)
+                        os.remove(complete_path)
                     except ValueError:
                         abort(400, message='Creating the archive failed')
 

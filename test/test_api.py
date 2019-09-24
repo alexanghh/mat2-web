@@ -232,6 +232,20 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 400)
 
         post_body = {
+            u'download_list': [{}, {}]
+        }
+        request = self.app.post('/api/download/bulk',
+                                data=json.dumps(post_body),
+                                headers={'content-type': 'application/json'}
+                                )
+
+        response = json.loads(request.data.decode('utf-8'))
+        print(response)
+        self.assertEqual(response['message']['download_list'][0]['0'][0]['file_name'][0], 'required field')
+        self.assertEqual(response['message']['download_list'][0]['0'][0]['key'][0], 'required field')
+        self.assertEqual(request.status_code, 400)
+
+        post_body = {
             u'download_list': [
                 {
                     u'file_name': 'test.jpg',
@@ -286,43 +300,6 @@ class Mat2APITestCase(unittest.TestCase):
 
         response = json.loads(request.data.decode('utf-8'))
         self.assertEqual(response['message']['download_list'][0], 'max length is 10')
-        self.assertEqual(request.status_code, 400)
-
-        post_body = {
-            u'download_list': [
-                {
-                    u'file_name_x': 'invalid_file_name',
-                    u'key_x': 'invalid_key'
-                },
-                {
-                    u'file_name_x': 'invalid_file_name',
-                    u'key_x': 'invalid_key'
-                }
-            ]
-        }
-        request = self.app.post('/api/download/bulk',
-                                data=json.dumps(post_body),
-                                headers={'content-type': 'application/json'}
-                                )
-
-        response = json.loads(request.data.decode('utf-8'))
-        expected = {
-            'message': {
-                'download_list': [
-                    {
-                        '0': [{
-                            'file_name_x': ['unknown field'],
-                            'key_x': ['unknown field']
-                        }],
-                        '1': [{
-                            'file_name_x': ['unknown field'],
-                            'key_x': ['unknown field']
-                        }]
-                    }
-                ]
-            }
-        }
-        self.assertEqual(response, expected)
         self.assertEqual(request.status_code, 400)
 
         post_body = {

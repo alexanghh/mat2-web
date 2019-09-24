@@ -190,8 +190,8 @@ def create_app(test_config=None):
                 'schema': {
                     'type': 'dict',
                     'schema': {
-                        'key': {'type': 'string'},
-                        'file_name': {'type': 'string'}
+                        'key': {'type': 'string', 'required': True},
+                        'file_name': {'type': 'string', 'required': True}
                     }
                 }
             }

@@ -151,6 +151,10 @@ class Mat2APITestCase(unittest.TestCase):
         error = json.loads(request.data.decode('utf-8'))['message']
         self.assertEqual(error, 'The file hash does not match')
 
+        request = self.app.head(data['download_link'])
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.headers['Content-Length'], '633')
+
         request = self.app.get(data['download_link'])
         self.assertEqual(request.status_code, 200)
 
@@ -209,6 +213,10 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertIn('cleaned.zip', response['output_filename'])
         self.assertIn(response['mime'], 'application/zip')
         self.assertEqual(response['meta_after'], {})
+
+        request = self.app.head(response['download_link'])
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.headers['Content-Length'], '1596')
 
         request = self.app.get(response['download_link'])
         zip_response = zipfile.ZipFile(BytesIO(request.data))

@@ -35,7 +35,7 @@ def create_app(test_config=None):
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
 
     @app.route('/download/<string:key>/<string:filename>')
-    def download_file(key:str, filename:str):
+    def download_file(key: str, filename:str):
         if filename != secure_filename(filename):
             return redirect(url_for('upload_file'))
 
@@ -173,11 +173,12 @@ def create_app(test_config=None):
     class APIDownload(Resource):
         def get(self, key: str, filename: str):
             complete_path, filepath = is_valid_api_download_file(filename, key)
-
-            @after_this_request
-            def remove_file(response):
-                os.remove(complete_path)
-                return response
+            # Make sure the file is NOT deleted on HEAD requests
+            if request.method == 'GET':
+                @after_this_request
+                def remove_file(response):
+                    os.remove(complete_path)
+                    return response
 
             return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
 

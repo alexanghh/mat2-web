@@ -157,6 +157,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         request = self.app.get(data['download_link'])
         self.assertEqual(request.status_code, 200)
+        self.assertIn('attachment; filename=test_name.cleaned.jpg', request.headers['Content-Disposition'])
 
         request = self.app.get(data['download_link'])
         self.assertEqual(request.status_code, 404)
@@ -219,6 +220,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.headers['Content-Length'], '1596')
 
         request = self.app.get(response['download_link'])
+        self.assertIn('attachment; filename=files.', request.headers['Content-Disposition'])
         zip_response = zipfile.ZipFile(BytesIO(request.data))
         self.assertEquals(2, len(zip_response.namelist()))
         for name in zip_response.namelist():

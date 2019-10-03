@@ -50,7 +50,7 @@ def create_app(test_config=None):
         def remove_file(response):
             os.remove(complete_path)
             return response
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filepath, as_attachment=True)
 
     @app.route('/', methods=['GET', 'POST'])
     def upload_file():
@@ -180,7 +180,7 @@ def create_app(test_config=None):
                     os.remove(complete_path)
                     return response
 
-            return send_from_directory(app.config['UPLOAD_FOLDER'], filepath)
+            return send_from_directory(app.config['UPLOAD_FOLDER'], filepath, as_attachment=True)
 
     class APIBulkDownloadCreator(Resource):
         schema = {

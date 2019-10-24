@@ -190,11 +190,24 @@ The `key` parameter is the key from a previously uploaded file.
 ```
 
 # Docker
+
 There are two Dockerfiles present in this repository. The file called `Dockerfile.development` is used for development 
 and `Dockerfile.production` is used for production deployments.
 
 You can find the automated docker builds in the registry of this 
 repository: https://0xacab.org/jvoisin/mat2-web/container_registry
+
+# Configuration
+
+The default settings from `main.py` may be overridden by adding a `config.py`
+file and add custom values for the relevant flask config variables. E.g.:
+
+```
+MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
+```
+
+See [Flask configuration docs](http://exploreflask.com/en/latest/configuration.html)
+for further information.
 
 # Custom templates
 

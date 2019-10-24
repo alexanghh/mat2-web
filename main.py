@@ -25,6 +25,7 @@ def create_app(test_config=None):
     app.config['UPLOAD_FOLDER'] = './uploads/'
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
+    app.config.from_object('config') # optionally load settings from config.py
 
     app.jinja_loader = jinja2.ChoiceLoader([  # type: ignore
         jinja2.FileSystemLoader(app.config['CUSTOM_TEMPLATES_DIR']),

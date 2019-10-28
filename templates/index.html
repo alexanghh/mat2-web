@@ -1,31 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h2>» Remove metadata</h2>
-<p>
-	Upload your file (max size: {{ max_file_size }}MB), get a <em>cleaned</em> one in
-	response.
-	<br><br>
-	Please note that while we do not keep a copy of your file,<br>
-	there is no way that you could be certain about this: act accordingly.
-	<br><br>
-	If you have the option, always run <a href="https://0xacab.org/jvoisin/mat2">mat2</a>
-	on your local device instead!<br>
-</p>
-<details>
-	<summary>Click <span class='fakelink'>here</span> to see the supported formats</summary>
-	<ul>
-		{% for mimetype in mimetypes %}
-		<li>{{ mimetype }}</li>
-		{% endfor %}
-	</ul>
-</details>
-<br>
-<p>
-	Simply drag &amp; drop your file here or use the file select button below.
-</p>
-<form class='b' method=post enctype=multipart/form-data>
-	<input type=file name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
-	<input type=submit value=Upload>
-</form>
+<div class="shadowed-box u-text-center u-center-block">
+    <h2 class="uk-text-center">Remove metadata</h2>
+    <p class="uk-text-center">
+       The file you see is just the tip of the iceberg. Remove the hidden meta
+    </p>
+    <form class="b" method=post enctype=multipart/form-data>
+        <div class="uk-margin">
+            <input type="file" name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
+            <button class="uk-button uk-button-default" type="submit" value="Upload">Upload</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

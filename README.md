@@ -16,6 +16,12 @@ serious, yet.
 There is a demo instance deployed a [mat2-web.dustri.org](https://mat2-web.dustri.org).
 Please don't upload any sensitive files to it.
 
+# Vue Frontend
+![Frontend GIF Preview](https://0xacab.org/jfriedli/mat2-quasar-frontend/raw/2dd5de537088d67fe4167bf5b2e1f5dacf2fa537/mat-frontend.gif?inline=true)
+There is a SPA Frontend available at https://0xacab.org/jfriedli/mat2-quasar-frontend. It consumes
+the RESTful API of this project. As a fallback for non JS users it redirects to this web app.
+To set it up checkout the [Readme](https://0xacab.org/jfriedli/mat2-quasar-frontend/blob/master/README.md).
+
 # How to deploy it?
 
 mat2 is available in [Debian stable](https://packages.debian.org/stable/mat2).

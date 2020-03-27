@@ -4,8 +4,9 @@ import json
 import os
 import shutil
 import zipfile
-
 from six import BytesIO
+
+from unittest.mock import patch
 
 import main
 
@@ -121,6 +122,23 @@ class Mat2APITestCase(unittest.TestCase):
 
         rv = self.app.get('/api/extension', headers={'Origin': 'origin1.gnu'})
         self.assertEqual(rv.headers['Access-Control-Allow-Origin'], 'origin1.gnu')
+
+    def test_api_cleaning_failed(self):
+        request = self.app.post('/api/upload',
+                                data='{"file_name": "test_name.zip", '
+                                     '"file": "UEsDBBQACAAIAPicPE8AAAAAAAAAAAAAAAAXACAAZmFpbGluZy5ub3Qt'
+                                     'd29ya2luZy1leHRVVA0AB+Saj13kmo9d5JqPXXV4CwABBOkDAAAE6QMAAAMAUEsHCAAA'
+                                     'AAACAAAAAAAAAFBLAwQUAAgACAD6nDxPAAAAAAAAAAAAAAAACQAgAHRlc3QuanNvblVUD'
+                                     'QAH6JqPXeiaj13omo9ddXgLAAEE6QMAAATpAwAAAwBQSwcIAAAAAAIAAAAAAAAAUEsBAhQD'
+                                     'FAAIAAgA+Jw8TwAAAAACAAAAAAAAABcAIAAAAAAAAAAAAKSBAAAAAGZhaWxpbmcubm90LXd'
+                                     'vcmtpbmctZXh0VVQNAAfkmo9d5JqPXeSaj111eAsAAQTpAwAABOkDAABQSwECFAMUAAgACAD6'
+                                     'nDxPAAAAAAIAAAAAAAAACQAgAAAAAAAAAAAApIFnAAAAdGVzdC5qc29uVVQNAAfomo9d6JqPXe'
+                                     'iaj111eAsAAQTpAwAABOkDAABQSwUGAAAAAAIAAgC8AAAAwAAAAAAA"}',
+                                headers={'content-type': 'application/json'}
+                                )
+        error = json.loads(request.data.decode('utf-8'))['message']
+        self.assertEqual(error, 'Unable to clean application/zip')
+
 
     def test_api_download(self):
         request = self.app.post('/api/upload',
@@ -263,7 +281,6 @@ class Mat2APITestCase(unittest.TestCase):
                                 )
 
         response = json.loads(request.data.decode('utf-8'))
-        print(response)
         self.assertEqual(response['message']['download_list'][0]['0'][0]['file_name'][0], 'required field')
         self.assertEqual(response['message']['download_list'][0]['0'][0]['key'][0], 'required field')
         self.assertEqual(request.status_code, 400)
@@ -343,6 +360,34 @@ class Mat2APITestCase(unittest.TestCase):
                                 )
         response = json.loads(request.data.decode('utf-8'))
         self.assertEqual('File not found', response['message'])
+
+    @patch('file_removal_scheduler.random.randint')
+    def test_api_upload_leftover(self, randint_mock):
+        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '0'
+        app = main.create_app()
+        self.upload_folder = tempfile.mkdtemp()
+        app.config.update(
+            TESTING=True,
+            UPLOAD_FOLDER=self.upload_folder
+        )
+        app = app.test_client()
+        randint_mock.return_value = 1
+        self.upload_download_test_jpg_and_assert_response_code(app, 200)
+        randint_mock.return_value = 0
+        self.upload_download_test_jpg_and_assert_response_code(app, 404)
+
+        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '9999'
+
+    def upload_download_test_jpg_and_assert_response_code(self, app, code):
+        request = app.post('/api/upload',
+                           data='{"file_name": "test_name.jpg", '
+                                '"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAf'
+                                'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
+                           headers={'content-type': 'application/json'}
+                           )
+        download_link = json.loads(request.data.decode('utf-8'))['download_link']
+        request = app.get(download_link)
+        self.assertEqual(code, request.status_code)
 
 
 if __name__ == '__main__':

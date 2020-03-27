@@ -52,7 +52,11 @@ Note that you can add multiple hosts from which you want to accept API requests.
 a space.
 **IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
 
-Configure another environment variable: `MAT2_MAX_FILES_BULK_DOWNLOAD=10`
+Configure the following environment variables:
+ 
+ - `MAT2_MAX_FILES_BULK_DOWNLOAD=10` Max number of files that can be grouped for a bulk download.
+ - `MAT2_MAX_FILE_AGE_FOR_REMOVAL=900` Seconds a file in the upload folder is kept. 
+ After that it will be deleted. Default `15 * 60`
 
 This specifies the max number of files that can be bulk downloaded using the api.
 Note: Each file has a max file size of 16mb
@@ -65,10 +69,6 @@ systemctl restart nginx/apache/…
 ```
 
 It should now be working.
-
-You should add `find /var/www/mat2-web/uploads/ -type f -mtime +1 -exec rm {} \;`
-in a crontab to remove files that people might have uploaded but never
-downloaded.
 
 # Deploy via Ansible
 
@@ -91,10 +91,6 @@ https://0xacab.org/jvoisin/mat2-web/container_registry
 
 Example: 
 `docker run -p 80:80 -d -e MAT2_ALLOW_ORIGIN_WHITELIST='https://myhost1.org' registry.0xacab.org/jvoisin/mat2-web:latest`
-
-Make sure to add 
-`find /var/www/mat2-web/uploads/ -type f -mtime +1 -exec rm {} \;` as cron job
-run inside the container.
 
 # Development
 Install docker and docker-compose and then run `docker-compose up` to setup

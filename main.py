@@ -10,6 +10,7 @@ import zipfile
 
 from cerberus import Validator
 import utils
+import file_removal_scheduler
 from libmat2 import parser_factory
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, after_this_request
 from flask_restful import Resource, Api, reqparse, abort
@@ -25,31 +26,36 @@ def create_app(test_config=None):
     app.config['UPLOAD_FOLDER'] = './uploads/'
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
-    app.config.from_object('config') # optionally load settings from config.py
+    # optionally load settings from config.py
+    app.config.from_object('config')
+
+    if test_config is not None:
+        app.config.update(test_config)
 
     app.jinja_loader = jinja2.ChoiceLoader([  # type: ignore
         jinja2.FileSystemLoader(app.config['CUSTOM_TEMPLATES_DIR']),
         app.jinja_loader,
-        ])
+    ])
 
     api = Api(app)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
 
     @app.route('/download/<string:key>/<string:filename>')
-    def download_file(key: str, filename:str):
+    def download_file(key: str, filename: str):
         if filename != secure_filename(filename):
             return redirect(url_for('upload_file'))
 
         complete_path, filepath = get_file_paths(filename)
+        file_removal_scheduler.run_file_removal_job(app.config['UPLOAD_FOLDER'])
 
         if not os.path.exists(complete_path):
             return redirect(url_for('upload_file'))
         if hmac.compare_digest(utils.hash_file(complete_path), key) is False:
             return redirect(url_for('upload_file'))
-
         @after_this_request
         def remove_file(response):
-            os.remove(complete_path)
+            if os.path.exists(complete_path):
+                os.remove(complete_path)
             return response
         return send_from_directory(app.config['UPLOAD_FOLDER'], filepath, as_attachment=True)
 
@@ -176,9 +182,11 @@ def create_app(test_config=None):
             complete_path, filepath = is_valid_api_download_file(filename, key)
             # Make sure the file is NOT deleted on HEAD requests
             if request.method == 'GET':
+                file_removal_scheduler.run_file_removal_job(app.config['UPLOAD_FOLDER'])
                 @after_this_request
                 def remove_file(response):
-                    os.remove(complete_path)
+                    if os.path.exists(complete_path):
+                        os.remove(complete_path)
                     return response
 
             return send_from_directory(app.config['UPLOAD_FOLDER'], filepath, as_attachment=True)

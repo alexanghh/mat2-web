@@ -202,6 +202,13 @@ and `Dockerfile.production` is used for production deployments.
 You can find the automated docker builds in the registry of this 
 repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 
+### Building the production image
+Build command: `docker build -f Dockerfile.production -t mat-web .`
+
+Run it: ` docker run -ti -p8181:8080 --read-only --tmpfs /tmp --tmpfs=/var/www/mat2-web/uploads  mat-web:latest`
+
+This does mount the upload folder as tmpfs and servers the app on `localhost:8181`
+
 # Configuration
 
 The default settings from `main.py` may be overridden by adding a `config.py`

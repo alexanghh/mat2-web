@@ -1,23 +1,46 @@
-From debian:buster-slim
-WORKDIR /var/www/mat2-web
-COPY . /var/www/mat2-web
-RUN apt-get update \
-&&  apt-get install --no-install-recommends --no-install-suggests --yes \
-    systemd \
-    mat2 \
-    uwsgi \
-    uwsgi-plugin-python3 \
-    nginx-light \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
-&&  rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
-&&  pip3 install -r requirements.txt \
-&&  mkdir ./uploads \
-&&  chown -R www-data:www-data . \
-&&  cp ./config/uwsgi.config /etc/uwsgi/apps-enabled/mat2-web.ini \
-&&  rm /etc/nginx/sites-enabled/default \
-&&  mkdir -p /etc/nginx/sites-enabled/ \
-&&  cp ./config/nginx.config /etc/nginx/sites-enabled/mat2.conf
+# https://github.com/nginxinc/docker-nginx-unprivileged/blob/master/stable/buster/Dockerfile
 
-CMD ["sh", "-c", "/etc/init.d/nginx restart; uwsgi --ini /etc/uwsgi/apps-enabled/mat2-web.ini"]
+From debian:buster-slim
+
+LABEL maintainer="Mat-Web Maintainer <jan.friedli@immerda.ch>"
+
+WORKDIR /var/www/mat2-web
+
+COPY . /var/www/mat2-web
+
+RUN set -x \
+    && addgroup --system --gid 101 nginx \
+    && adduser --system --disabled-login --ingroup nginx --no-create-home --home /nonexistent --gecos "nginx user" --shell /bin/false --uid 101 nginx \
+    && apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+        gnupg1  \
+        ca-certificates \
+        nginx \
+        gettext-base \
+        systemd \
+        mat2 \
+        uwsgi \
+        uwsgi-plugin-python3 \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
+    && pip3 install -r requirements.txt \
+    && rm /etc/nginx/sites-enabled/default /etc/nginx/nginx.conf \
+    && cp ./config/nginx-default.conf /etc/nginx/sites-enabled/default \
+    && cp ./config/nginx.conf /etc/nginx/nginx.conf \
+    && cp ./config/uwsgi.config /etc/uwsgi/apps-enabled/mat2-web.ini \
+    && chown 101:101 /etc/uwsgi/apps-enabled/mat2-web.ini \
+    &&  mkdir -p /var/cache/nginx \
+    && chown -R 101:0 /var/cache/nginx \
+    && chmod -R g+w /var/cache/nginx \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log \
+    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
+    &&  mkdir ./uploads \
+    &&  chown -R nginx:nginx .
+
+STOPSIGNAL SIGTERM
+
+USER 101
+
+CMD ["sh", "-c", "nginx; uwsgi --ini /etc/uwsgi/apps-enabled/mat2-web.ini;"]

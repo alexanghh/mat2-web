@@ -2,7 +2,7 @@
 
 From registry.0xacab.org/georg/mat2-ci-images:debian
 
-LABEL maintainer="Mat2-Web Co-Maintainer <jan.friedli@immerda.ch>"
+LABEL maintainer="Mat-Web Co-Maintainer <jan.friedli@immerda.ch>"
 
 WORKDIR /var/www/mat2-web
 

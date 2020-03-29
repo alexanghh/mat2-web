@@ -84,14 +84,6 @@ collector cronjob to remove leftover files. Besides, it can create a
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.
 
-
-# Deploy using Docker
-You can find the ready to run docker image here: 
-https://0xacab.org/jvoisin/mat2-web/container_registry
-
-Example: 
-`docker run -p 80:80 -d -e MAT2_ALLOW_ORIGIN_WHITELIST='https://myhost1.org' registry.0xacab.org/jvoisin/mat2-web:latest`
-
 # Development
 Install docker and docker-compose and then run `docker-compose up` to setup
 the docker dev environment. Mat2-web is now accessible on your host machine at `localhost:5000`.
@@ -205,7 +197,7 @@ repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 ### Building the production image
 Build command: `docker build -f Dockerfile.production -t mat-web .`
 
-Run it: ` docker run -ti -p8181:8080 --security-opt=no-new-privileges --read-only --tmpfs /tmp --tmpfs=/var/www/mat2-web/uploads  mat-web:latest`
+Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/var/www/mat2-web/uploads  mat-web:latest`
 
 This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
 

@@ -91,7 +91,7 @@ class Mat2WebTestCase(TestCase):
                            data=dict(
                                file=(io.BytesIO(zip_file_bytes), 'test.zip'),
                            ), follow_redirects=True)
-        self.assertIn(b'Unable to clean',rv.data)
+        self.assertIn(b'Unable to clean', rv.data)
         self.assertEqual(rv.status_code, 200)
 
     def test_get_upload_no_file_name(self):

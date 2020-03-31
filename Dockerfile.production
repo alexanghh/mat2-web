@@ -1,12 +1,14 @@
 # https://github.com/nginxinc/docker-nginx-unprivileged/blob/master/stable/buster/Dockerfile
 
-From registry.0xacab.org/georg/mat2-ci-images:debian
+From debian:buster-slim
 
 LABEL maintainer="Mat-Web Co-Maintainer <jan.friedli@immerda.ch>"
 
 WORKDIR /var/www/mat2-web
 
 COPY . /var/www/mat2-web
+
+ENV MAT2_WEB_DOWNLOAD_FOLDER /app/upload
 
 RUN set -x \
     && addgroup --system --gid 101 nginx \
@@ -16,6 +18,7 @@ RUN set -x \
         ca-certificates \
         nginx \
         systemd \
+        mat2 \
         uwsgi \
         uwsgi-plugin-python3 \
         python3-pip \

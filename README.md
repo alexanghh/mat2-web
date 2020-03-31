@@ -47,20 +47,18 @@ Nginx is the recommended web engine, but you can also use Apache if you prefer,
 by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
 to your `/etc/apache2/sites-enabled/mat2-web` file.
 
-Then configure the environment variable: `MAT2_ALLOW_ORIGIN_WHITELIST=https://myhost1.org https://myhost2.org`
-Note that you can add multiple hosts from which you want to accept API requests. These need to be separated by
-a space.
-**IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
-
 Configure the following environment variables:
  
+ -  `MAT2_ALLOW_ORIGIN_WHITELIST=https://myhost1.org https://myhost2.org`
+ Note that you can add multiple hosts from which you want to accept API requests. These need to be separated by
+a space. **IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
  - `MAT2_MAX_FILES_BULK_DOWNLOAD=10` Max number of files that can be grouped for a bulk download.
+ Note: Each file has a max file size of 16mb
+
  - `MAT2_MAX_FILE_AGE_FOR_REMOVAL=900` Seconds a file in the upload folder is kept. 
- After that it will be deleted. Default `15 * 60`
-
-This specifies the max number of files that can be bulk downloaded using the api.
-Note: Each file has a max file size of 16mb
-
+  After that it will be deleted. Default `15 * 60`
+ - `MAT2_WEB_DOWNLOAD_FOLDER` Define the upload folder path. Defaults to:  `./uploads/`
+ 
 Finally, restart uWSGI and your web server:
 
 ```
@@ -197,7 +195,7 @@ repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 ### Building the production image
 Build command: `docker build -f Dockerfile.production -t mat-web .`
 
-Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/var/www/mat2-web/uploads  mat-web:latest`
+Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/uploads  mat-web:latest`
 
 This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
 

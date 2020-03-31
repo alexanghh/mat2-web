@@ -10,7 +10,7 @@ from flask_cors import CORS
 def create_app(test_config=None):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(32)
-    app.config['UPLOAD_FOLDER'] = './uploads/'
+    app.config['UPLOAD_FOLDER'] = os.environ.get('MAT2_WEB_DOWNLOAD_FOLDER', './uploads/')
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
     # optionally load settings from config.py

@@ -195,9 +195,14 @@ repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 ### Building the production image
 Build command: `docker build -f Dockerfile.production -t mat-web .`
 
-Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/uploads  mat-web:latest`
+Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  mat-web:latest`
 
 This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
+
+##### Podman
+Build: `podman build -f Dockerfile.production -t matweb-podman .`
+
+Run: `podman run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  matweb-podman:latest`
 
 # Configuration
 

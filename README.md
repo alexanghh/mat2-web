@@ -202,7 +202,7 @@ This does mount the upload folder as tmpfs and servers the app on `localhost:818
 ##### Podman
 Build: `podman build -f Dockerfile.production -t matweb-podman .`
 
-Run: `podman run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  matweb-podman:latest`
+Run: `podman run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  --security-opt=no-new-privileges  matweb-podman:latest`
 
 # Configuration
 

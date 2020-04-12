@@ -195,7 +195,7 @@ repository: https://0xacab.org/jvoisin/mat2-web/container_registry
 ### Building the production image
 Build command: `docker build -f Dockerfile.production -t mat-web .`
 
-Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  mat-web:latest`
+Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload --security-opt=no-new-privileges --security-opt=seccomp=./config/seccomp.json mat-web:latest`
 
 This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
 

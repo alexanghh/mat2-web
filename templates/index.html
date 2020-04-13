@@ -10,10 +10,16 @@
                 <form method=post enctype=multipart/form-data>
                     <div class="uk-margin">
                         <input type="file" name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
-                        <button class="uk-button uk-button-default" type="submit" value="Upload">Upload</button>
+                        <button class="uk-button uk-button-primary" type="submit" value="Upload">Upload</button>
                     </div>
                 </form>
             </div>
         </div>
+        <a href="/info" role="link" class="">
+            <span class="info-link">
+                ?
+            </span>
+        </a>
+
     </div>
 {% endblock %}

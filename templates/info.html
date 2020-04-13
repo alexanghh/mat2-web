@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <h1>
+            What are metadata?
+        </h1>
+        <p>
+            Metadata consists of information that characterizes your file. They answer background questions about who, how, when, and what. This gives your file multi-faceted documentation.
+            <a href="https://0xacab.org/jvoisin/mat2/blob/master/README.md">
+                https://0xacab.org/jvoisin/mat2/blob/master/README.md (09.2019)
+            </a>
+        </p>
+
+        <p>
+            The metadata of your file leak a lot of information about you. For example, cameras store file information about the time of a shot and which camera was used for it. Documents, such as PDF or Words, automatically add author or company information to the document. You don't want to publish all this information at all?
+        </p>
+
+        <p>
+            This is precisely the job of MAT2: getting rid, as much as possible, of metadata.
+        </p>
+
+        <h1>
+            MAT2 locally
+        </h1>
+        <p>
+            Please note that while we do not keep a copy of your file, there is no way that you could be certain about this: Act accordingly. Due to this warning, please consider running MAT2 locally on your device.
+        </p>
+
+        <h2>
+            MAT2 is available in pip
+        </h2>
+        <p>
+            <pre class="  language-javascript"><code class="  language-javascript">pip3 install mat2</code></pre>
+        </p>
+        <h2>
+            MAT2 on Debian
+        </h2>
+        <p>
+            MAT2 is available on Debian.
+        </p>
+        <p>
+            <pre class="  language-javascript"><code class="  language-javascript">sudo apt install mat2</code></pre>
+        </p>
+        <p>
+            More info: <a href="https://packages.debian.org/sid/mat2">https://packages.debian.org/sid/mat2</a>
+        </p>
+
+        <h1>
+            Supported file formats
+        </h1>
+        <p>
+            {% for extension in extensions %}
+                <span class="uk-badge">
+                    {{ extension }}
+                </span>
+            {% endfor %}
+        </p>
+
+    </div>
+
+{% endblock %}

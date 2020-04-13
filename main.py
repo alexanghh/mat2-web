@@ -40,6 +40,13 @@ def create_app(test_config=None):
     api = Api(app)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
 
+    @app.route('/info')
+    def info():
+        get_supported_extensions()
+        return render_template(
+            'info.html', extensions=get_supported_extensions()
+        )
+
     @app.route('/download/<string:key>/<string:filename>')
     def download_file(key: str, filename: str):
         if filename != secure_filename(filename):

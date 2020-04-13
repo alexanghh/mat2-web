@@ -150,6 +150,13 @@ class Mat2WebTestCase(unittest.TestCase):
         self.assertEqual(302, request.status_code)
         os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '9999'
 
+    def test_info_page(self):
+        rv = self.app.get('/info')
+        self.assertIn(b'What are metadata?', rv.data)
+        self.assertIn(b'.asc', rv.data)
+        self.assertIn(b'.mp2', rv.data)
+        self.assertEqual(rv.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

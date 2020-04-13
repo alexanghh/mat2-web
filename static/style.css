@@ -71,6 +71,10 @@ details[open] > summary:before {
     width: 7rem;
 }
 
+.uk-button-primary, .uk-alert {
+	border-radius: 3px;
+}
+
 .shadowed-box {
 	box-shadow: 0 0 7px 1px rgba(223,215,215,0.75);
     padding: 1rem;

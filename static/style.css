@@ -84,15 +84,15 @@ details[open] > summary:before {
 	position:absolute;
     right: 10px;
     bottom: 10px;
-	border-radius: 45%;
+	border-radius: 50%;
 	border: none;
 	padding: 6px;
 	display: flex;
 	align-items: center;
   	justify-content: center;
 	background-color: #A6C8F1;
-	max-height: 10px;
-	max-width: 10px;
+	width: 10px;
+	height: 10px;
 	font-size: 10px;
 	color: #FFFFFF;
 }

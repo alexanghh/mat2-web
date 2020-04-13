@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="shadowed-box u-text-center u-center-block">
-    <h2 class="uk-text-center">Remove metadata</h2>
-    <p class="uk-text-center">
-       The file you see is just the tip of the iceberg. Remove the hidden meta
-    </p>
-    <form class="b" method=post enctype=multipart/form-data>
-        <div class="uk-margin">
-            <input type="file" name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
-            <button class="uk-button uk-button-default" type="submit" value="Upload">Upload</button>
+    <div class="shadowed-box u-text-center u-center-block">
+        <h2 class="uk-text-center">Remove metadata</h2>
+        <p class="uk-text-center">
+            The file you see is just the tip of the iceberg. Remove the hidden meta
+        </p>
+        <div class="uk-flex uk-flex-center">
+            <div>
+                <form method=post enctype=multipart/form-data>
+                    <div class="uk-margin">
+                        <input type="file" name=file id="upload_file" accept="{{ mimetypes |  join(', ') }}">
+                        <button class="uk-button uk-button-default" type="submit" value="Upload">Upload</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
-</div>
+    </div>
 {% endblock %}

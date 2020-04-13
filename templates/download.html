@@ -1,37 +1,69 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>» Metadata removed</h2>
-<p>
-{% if not meta_after %}
-mat2 managed to remove <b>all metadata</b> from <pre>{{ filename }}</pre>.
-{% else %}
-mat2 <b>could not</b> remove all the metadata from <pre>{{ filename }}</pre>, those are the remaining ones:
-<ul>
-	{% for key, value in meta_after.items() %}
-	<li> <b>{{ key }}</b>: {{ value }}</li>
-	{% endfor %}
-	</ul>
-{%endif %}
-</p>
-<a class="button button-primary" href='{{ url_for('download_file', key=key, filename=filename) }}'>⇩ Download cleaned file</a>
+    <div class="shadowed-box u-text-center u-center-block">
+        <h2 class="uk-text-center">Metadata removed</h2>
+        {% if not meta_after %}
+            <p class="uk-text-center">
+                Successfully removed the metadata
+            </p>
+        {% endif %}
+        <div class="uk-flex uk-flex-center">
+            <div>
+                <a class="uk-flex-1" href='{{ url_for('download_file', key=key, filename=filename) }}'>
+                    <button class="uk-button uk-button-primary">
+                        ⇩ download cleaned file
+                    </button>
+                </a>
+            </div>
+        </div>
 
-<hr/>
 
-{% if meta %}
-<p>Just for fun, those are the metadata that mat2 detected in your file, before cleanup.</p>
-<div class='b'>
-	<ul>
-	{% for key, value in meta.items() %}
-	<li>{{ key }}: <i>{{ value }}</i></li>
-	{% endfor %}
-	</ul>
-</div>
-{% else %}
-<p>Not a single metadata was found by mat2, odds are that your file was already clean!</p>
-{% endif %}
+        <p>
+            {% if meta_after %}
+                <div class="uk-alert uk-alert-warning" uk-alert>
+                    <p>
+                        <b>Could not</b> remove all the metadata
+                    </p>
+                </div>
+                <h3>
+                    Remaining Metadata
+                </h3>
+                <dl class="uk-description-list uk-description-list-divider">
+                    {% for key, value in meta_after.items() %}
+                        <dt>
+                            {{ key }}
+                        </dt>
+                        <dd>
+                            {{ value }}
+                        </dd>
+                    {% endfor %}
+                </dl>
+            {% endif %}
+    </p>
 
-<hr/>
+    {% if meta %}
+        <h3>
+            Removed Metadata
+        </h3>
+        <dl class="uk-description-list uk-description-list-divider">
+            {% for key, value in meta.items() %}
+                <dt>
+                    {{ key }}
+                </dt>
+                <dd>
+                    {{ value }}
+                </dd>
+            {% endfor %}
+        </dl>
+    {% else %}
+        <div class="uk-alert uk-alert-success">
+            <p>
+                Not a single metadata was found, odds are that your file was already clean!
+            </p>
+        </div>
+    {% endif %}
+    </div>
 
 {% endblock %}
 

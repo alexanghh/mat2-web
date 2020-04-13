@@ -21,8 +21,6 @@
 
 footer {
 	width: 100%;
-	position: absolute;
-	bottom: 0;
 	height: 1%;
 	text-align: center;
 }
@@ -78,4 +76,5 @@ details[open] > summary:before {
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 3px;
+	width: 50vw;
 }

@@ -14,12 +14,14 @@ import main
 class Mat2APITestCase(unittest.TestCase):
     def setUp(self):
         os.environ.setdefault('MAT2_ALLOW_ORIGIN_WHITELIST', 'origin1.gnu origin2.gnu')
-        app = main.create_app()
         self.upload_folder = tempfile.mkdtemp()
-        app.config.update(
-            TESTING=True,
-            UPLOAD_FOLDER=self.upload_folder
+        app = main.create_app(
+            test_config={
+                'TESTING': True,
+                'UPLOAD_FOLDER': self.upload_folder
+            }
         )
+
         self.app = app.test_client()
 
     def tearDown(self):
@@ -38,7 +40,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.headers['Access-Control-Allow-Origin'], 'origin1.gnu')
         self.assertEqual(request.status_code, 200)
 
-        data = json.loads(request.data.decode('utf-8'))
+        data = request.get_json()
         expected = {
             'output_filename': 'test_name.cleaned.jpg',
             'mime': 'image/jpeg',
@@ -64,7 +66,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.headers['Content-Type'], 'application/json')
 
         self.assertEqual(request.status_code, 400)
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error['file'], 'Post parameter is not specified: file')
 
         request = self.app.post('/api/upload',
@@ -74,7 +76,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.headers['Content-Type'], 'application/json')
 
         self.assertEqual(request.status_code, 400)
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'Failed decoding file: Incorrect padding')
 
     def test_api_not_supported(self):
@@ -87,7 +89,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.headers['Content-Type'], 'application/json')
         self.assertEqual(request.status_code, 415)
 
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'The type application/pdf is not supported')
 
     def test_api_supported_extensions(self):
@@ -136,7 +138,7 @@ class Mat2APITestCase(unittest.TestCase):
                                      'iaj111eAsAAQTpAwAABOkDAABQSwUGAAAAAAIAAgC8AAAAwAAAAAAA"}',
                                 headers={'content-type': 'application/json'}
                                 )
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'Unable to clean application/zip')
 
 
@@ -148,25 +150,25 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
         self.assertEqual(request.status_code, 200)
-        data = json.loads(request.data.decode('utf-8'))
+        data = request.get_json()
 
         request = self.app.get('http://localhost/api/download/'
                                '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/test name.cleaned.jpg')
         self.assertEqual(request.status_code, 400)
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'Insecure filename')
 
         request = self.app.get('http://localhost/api/download/'
                                '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/'
                                'wrong_file_name.jpg')
         self.assertEqual(request.status_code, 404)
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'File not found')
 
         request = self.app.get('http://localhost/api/download/81a541f9e/test_name.cleaned.jpg')
         self.assertEqual(request.status_code, 400)
 
-        error = json.loads(request.data.decode('utf-8'))['message']
+        error = request.get_json()['message']
         self.assertEqual(error, 'The file hash does not match')
 
         request = self.app.head(data['download_link'])
@@ -188,7 +190,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
         self.assertEqual(request.status_code, 200)
-        upload_one = json.loads(request.data.decode('utf-8'))
+        upload_one = request.get_json()
 
         request = self.app.post('/api/upload',
                                 data='{"file_name": "test_name_two.jpg", '
@@ -197,7 +199,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
         self.assertEqual(request.status_code, 200)
-        upload_two = json.loads(request.data.decode('utf-8'))
+        upload_two = request.get_json()
 
         post_body = {
             u'download_list': [
@@ -216,7 +218,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
 
-        response = json.loads(request.data.decode('utf-8'))
+        response = request.get_json()
         self.assertEqual(request.status_code, 201)
 
         self.assertIn(
@@ -268,7 +270,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
 
-        response = json.loads(request.data.decode('utf-8'))
+        response = request.get_json()
         self.assertEqual(response['message']['download_list'][0], 'min length is 2')
         self.assertEqual(request.status_code, 400)
 
@@ -280,7 +282,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
 
-        response = json.loads(request.data.decode('utf-8'))
+        response = request.get_json()
         self.assertEqual(response['message']['download_list'][0]['0'][0]['file_name'][0], 'required field')
         self.assertEqual(response['message']['download_list'][0]['0'][0]['key'][0], 'required field')
         self.assertEqual(request.status_code, 400)
@@ -338,7 +340,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
 
-        response = json.loads(request.data.decode('utf-8'))
+        response = request.get_json()
         self.assertEqual(response['message']['download_list'][0], 'max length is 10')
         self.assertEqual(request.status_code, 400)
 
@@ -358,17 +360,18 @@ class Mat2APITestCase(unittest.TestCase):
                                 data=json.dumps(post_body),
                                 headers={'content-type': 'application/json'}
                                 )
-        response = json.loads(request.data.decode('utf-8'))
+        response = request.get_json()
         self.assertEqual('File not found', response['message'])
 
-    @patch('file_removal_scheduler.random.randint')
+    @patch('matweb.file_removal_scheduler.random.randint')
     def test_api_upload_leftover(self, randint_mock):
         os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '0'
-        app = main.create_app()
         self.upload_folder = tempfile.mkdtemp()
-        app.config.update(
-            TESTING=True,
-            UPLOAD_FOLDER=self.upload_folder
+        app = main.create_app(
+            test_config={
+                'TESTING': True,
+                'UPLOAD_FOLDER': self.upload_folder
+            }
         )
         app = app.test_client()
         randint_mock.return_value = 1
@@ -385,7 +388,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
                            headers={'content-type': 'application/json'}
                            )
-        download_link = json.loads(request.data.decode('utf-8'))['download_link']
+        download_link = request.get_json()['download_link']
         request = app.get(download_link)
         self.assertEqual(code, request.status_code)
 

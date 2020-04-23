@@ -3,7 +3,9 @@ import tempfile
 from os import path, environ
 import shutil
 
-import file_removal_scheduler
+from unittest.mock import patch
+
+from matweb import file_removal_scheduler
 import main
 
 
@@ -17,26 +19,28 @@ class Mat2WebTestCase(unittest.TestCase):
         )
         self.app = app
 
-    def test_removal(self):
+    @patch('matweb.file_removal_scheduler.random.randint')
+    def test_removal(self, randint_mock):
         filename = 'test_name.cleaned.jpg'
         environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '0'
         open(path.join(self.upload_folder, filename), 'a').close()
         self.assertTrue(path.exists(path.join(self.upload_folder, )))
-        for i in range(0, 11):
-            file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
+        randint_mock.return_value = 0
+        file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
         self.assertFalse(path.exists(path.join(self.upload_folder, filename)))
 
         open(path.join(self.upload_folder, filename), 'a').close()
         file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
         self.assertTrue(path.exists(path.join(self.upload_folder, )))
 
-    def test_non_removal(self):
+    @patch('matweb.file_removal_scheduler.random.randint')
+    def test_non_removal(self, randint_mock):
         filename = u'i_should_no_be_removed.txt'
         environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '9999999'
         open(path.join(self.upload_folder, filename), 'a').close()
         self.assertTrue(path.exists(path.join(self.upload_folder, filename)))
-        for i in range(0, 11):
-            file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
+        randint_mock.return_value = 0
+        file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
         self.assertTrue(path.exists(path.join(self.upload_folder, filename)))
 
     def tearDown(self):

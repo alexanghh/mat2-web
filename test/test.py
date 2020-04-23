@@ -13,11 +13,12 @@ import main
 class Mat2WebTestCase(unittest.TestCase):
     def setUp(self):
         os.environ.setdefault('MAT2_ALLOW_ORIGIN_WHITELIST', 'origin1.gnu origin2.gnu')
-        app = main.create_app()
         self.upload_folder = tempfile.mkdtemp()
-        app.config.update(
-            TESTING=True,
-            UPLOAD_FOLDER=self.upload_folder
+        app = main.create_app(
+            test_config={
+                'TESTING': True,
+                'UPLOAD_FOLDER': self.upload_folder
+            }
         )
         self.app = app.test_client()
 
@@ -127,7 +128,7 @@ class Mat2WebTestCase(unittest.TestCase):
         rv = self.app.get('/download/70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3/test.cleaned.txt')
         self.assertEqual(rv.status_code, 302)
 
-    @patch('file_removal_scheduler.random.randint')
+    @patch('matweb.file_removal_scheduler.random.randint')
     def test_upload_leftover(self, randint_mock):
         randint_mock.return_value = 0
         os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '0'

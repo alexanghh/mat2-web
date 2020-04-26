@@ -36,7 +36,7 @@ def create_app(test_config=None):
     )
     api.add_resource(
         rest_api.APIDownload,
-        '/api/download/<string:key>/<string:filename>',
+        '/api/download/<string:key>/<string:secret>/<string:filename>',
         resource_class_kwargs={'upload_folder': app.config['UPLOAD_FOLDER']}
     )
     api.add_resource(

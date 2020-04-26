@@ -42,14 +42,15 @@ class APIUpload(Resource):
         if not parser.remove_all():
             abort(500, message='Unable to clean %s' % mime)
 
-        key, meta_after, output_filename = utils.cleanup(parser, filepath, self.upload_folder)
+        key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, self.upload_folder)
         return utils.return_file_created_response(
             output_filename,
             mime,
             key,
+            secret,
             meta,
             meta_after,
-            urljoin(request.host_url, '%s/%s/%s/%s' % ('api', 'download', key, output_filename))
+            urljoin(request.host_url, '%s/%s/%s/%s/%s' % ('api', 'download', key, secret, output_filename))
         )
 
 
@@ -58,8 +59,8 @@ class APIDownload(Resource):
     def __init__(self, **kwargs):
         self.upload_folder = kwargs['upload_folder']
 
-    def get(self, key: str, filename: str):
-        complete_path, filepath = utils.is_valid_api_download_file(filename, key, self.upload_folder)
+    def get(self, key: str, secret: str, filename: str):
+        complete_path, filepath = utils.is_valid_api_download_file(filename, key, secret, self.upload_folder)
         # Make sure the file is NOT deleted on HEAD requests
         if request.method == 'GET':
             file_removal_scheduler.run_file_removal_job(self.upload_folder)
@@ -87,6 +88,7 @@ class APIBulkDownloadCreator(Resource):
                 'type': 'dict',
                 'schema': {
                     'key': {'type': 'string', 'required': True},
+                    'secret': {'type': 'string', 'required': True},
                     'file_name': {'type': 'string', 'required': True}
                 }
             }
@@ -108,6 +110,7 @@ class APIBulkDownloadCreator(Resource):
                 complete_path, file_path = utils.is_valid_api_download_file(
                     file_candidate['file_name'],
                     file_candidate['key'],
+                    file_candidate['secret'],
                     self.upload_folder
                 )
                 try:
@@ -124,13 +127,17 @@ class APIBulkDownloadCreator(Resource):
         parser, mime = utils.get_file_parser(zip_path)
         if not parser.remove_all():
             abort(500, message='Unable to clean %s' % mime)
-        key, meta_after, output_filename = utils.cleanup(parser, zip_path, self.upload_folder)
+        key, secret, meta_after, output_filename = utils.cleanup(parser, zip_path, self.upload_folder)
         return {
                    'output_filename': output_filename,
                    'mime': mime,
                    'key': key,
+                   'secret': secret,
                    'meta_after': meta_after,
-                   'download_link': urljoin(request.host_url, '%s/%s/%s/%s' % ('api', 'download', key, output_filename))
+                   'download_link': urljoin(
+                       request.host_url,
+                       '%s/%s/%s/%s/%s' % ('api', 'download', key, secret, output_filename)
+                   )
                }, 201
 
 

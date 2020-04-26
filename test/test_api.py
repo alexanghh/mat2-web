@@ -30,33 +30,26 @@ class Mat2APITestCase(unittest.TestCase):
             del os.environ['MAT2_ALLOW_ORIGIN_WHITELIST']
 
     def test_api_upload_valid(self):
-        request = self.app.post('/api/upload',
-                                data='{"file_name": "test_name.jpg", '
-                                     '"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAf'
-                                     'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
-                                headers={'content-type': 'application/json'}
-                                )
+        request = self.app.post(
+            '/api/upload',
+            data='{"file_name": "test_name.jpg", '
+                 '"file": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAf'
+                 'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
+            headers={'content-type': 'application/json'}
+        )
         self.assertEqual(request.headers['Content-Type'], 'application/json')
         self.assertEqual(request.headers['Access-Control-Allow-Origin'], 'origin1.gnu')
         self.assertEqual(request.status_code, 200)
 
         data = request.get_json()
-        expected = {
-            'output_filename': 'test_name.cleaned.jpg',
-            'mime': 'image/jpeg',
-            'key': '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161',
-            'meta': {
-                'BitDepth': 8,
-                'ColorType': 'RGB with Alpha',
-                'Compression': 'Deflate/Inflate',
-                'Filter': 'Adaptive',
-                'Interlace': 'Noninterlaced'
-            },
-            'meta_after': {},
-            'download_link': 'http://localhost/api/download/'
-                             '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/test_name.cleaned.jpg'
-        }
-        self.assertEqual(data, expected)
+        self.assertEqual(data['output_filename'], 'test_name.cleaned.jpg')
+        self.assertEqual(data['output_filename'], 'test_name.cleaned.jpg')
+        self.assertEqual(data['mime'], 'image/jpeg')
+        self.assertEqual(len(data['secret']), 64)
+        self.assertEqual(len(data['key']), 64)
+        self.assertNotEqual(data['key'], data['secret'])
+        self.assertTrue('http://localhost/api/download/' in data['download_link'])
+        self.assertTrue('test_name.cleaned.jpg' in data['download_link'])
 
     def test_api_upload_missing_params(self):
         request = self.app.post('/api/upload',
@@ -141,7 +134,6 @@ class Mat2APITestCase(unittest.TestCase):
         error = request.get_json()['message']
         self.assertEqual(error, 'Unable to clean application/zip')
 
-
     def test_api_download(self):
         request = self.app.post('/api/upload',
                                 data='{"file_name": "test_name.jpg", '
@@ -152,22 +144,33 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 200)
         data = request.get_json()
 
-        request = self.app.get('http://localhost/api/download/'
+        request = self.app.get('http://localhost/api/download/161/'
                                '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/test name.cleaned.jpg')
         self.assertEqual(request.status_code, 400)
         error = request.get_json()['message']
         self.assertEqual(error, 'Insecure filename')
 
-        request = self.app.get('http://localhost/api/download/'
-                               '81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/'
-                               'wrong_file_name.jpg')
+        request = self.app.get(data['download_link'].replace('test_name', 'wrong_test'))
         self.assertEqual(request.status_code, 404)
         error = request.get_json()['message']
         self.assertEqual(error, 'File not found')
 
-        request = self.app.get('http://localhost/api/download/81a541f9e/test_name.cleaned.jpg')
+        uri_parts = data['download_link'].split("/")
+        self.assertEqual(len(uri_parts[5]), len(uri_parts[6]))
+        self.assertEqual(64, len(uri_parts[5]))
+
+        key_uri_parts = uri_parts
+        key_uri_parts[5] = '70623619c'
+        request = self.app.get("/".join(key_uri_parts))
         self.assertEqual(request.status_code, 400)
 
+        error = request.get_json()['message']
+        self.assertEqual(error, 'The file hash does not match')
+
+        key_uri_parts = uri_parts
+        key_uri_parts[6] = '70623619c'
+        request = self.app.get("/".join(key_uri_parts))
+        self.assertEqual(request.status_code, 400)
         error = request.get_json()['message']
         self.assertEqual(error, 'The file hash does not match')
 
@@ -205,11 +208,13 @@ class Mat2APITestCase(unittest.TestCase):
             u'download_list': [
                 {
                     u'file_name': upload_one['output_filename'],
-                    u'key': upload_one['key']
+                    u'key': upload_one['key'],
+                    u'secret': upload_one['secret']
                 },
                 {
                     u'file_name': upload_two['output_filename'],
-                    u'key': upload_two['key']
+                    u'key': upload_two['key'],
+                    u'secret': upload_two['secret']
                 }
             ]
         }
@@ -261,7 +266,8 @@ class Mat2APITestCase(unittest.TestCase):
             u'download_list': [
                 {
                     u'file_name': 'invalid_file_name',
-                    u'key': 'invalid_key'
+                    u'key': 'invalid_key',
+                    u'secret': 'invalid_secret'
                 }
             ]
         }
@@ -348,11 +354,13 @@ class Mat2APITestCase(unittest.TestCase):
             u'download_list': [
                 {
                     u'file_name': 'invalid_file_name1',
-                    u'key': 'invalid_key1'
+                    u'key': 'invalid_key1',
+                    u'secret': 'invalid_secret1'
                 },
                 {
                     u'file_name': 'invalid_file_name2',
-                    u'key': 'invalid_key2'
+                    u'key': 'invalid_key2',
+                    u'secret': 'invalid_secret2'
                 }
             ]
         }

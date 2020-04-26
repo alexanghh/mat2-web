@@ -18,8 +18,8 @@ def info():
     )
 
 
-@routes.route('/download/<string:key>/<string:filename>')
-def download_file(key: str, filename: str):
+@routes.route('/download/<string:key>/<string:secret>/<string:filename>')
+def download_file(key: str, secret: str, filename: str):
     if filename != secure_filename(filename):
         return redirect(url_for('routes.upload_file'))
 
@@ -28,7 +28,7 @@ def download_file(key: str, filename: str):
 
     if not os.path.exists(complete_path):
         return redirect(url_for('routes.upload_file'))
-    if hmac.compare_digest(utils.hash_file(complete_path), key) is False:
+    if hmac.compare_digest(utils.hash_file(complete_path, secret), key) is False:
         return redirect(url_for('routes.upload_file'))
 
     @after_this_request
@@ -67,10 +67,14 @@ def upload_file():
             flash('Unable to clean %s' % mime)
             return redirect(url_for('routes.upload_file'))
 
-        key, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
+        key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
 
         return render_template(
-            'download.html', mimetypes=mime_types, meta=meta, filename=output_filename, meta_after=meta_after, key=key
+            'download.html',
+            mimetypes=mime_types,
+            meta=meta,
+            download_uri=url_for('routes.download_file', key=key, secret=secret, filename=output_filename),
+            meta_after=meta_after,
         )
 
     max_file_size = int(current_app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024)

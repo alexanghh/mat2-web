@@ -10,7 +10,7 @@
         {% endif %}
         <div class="uk-flex uk-flex-center">
             <div>
-                <a class="uk-flex-1" href='{{ url_for('routes.download_file', key=key, filename=filename) }}'>
+                <a class="uk-flex-1" href='{{ download_uri }}'>
                     <button class="uk-button uk-button-primary">
                         ⇩ download cleaned file
                     </button>

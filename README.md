@@ -123,6 +123,7 @@ The `file` parameter is the base64 encoded file which will be cleaned.
     "output_filename": "fancy.cleaned.jpg",
     "mime": "image/jpg",
     "key": "81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161",
+    "secret": "44deb60b5febbd466e042f4172d36bcc5f7eb2eb6791d6e93191c378a381ae7c",
     "meta": {
         "BitDepth": 8,
         "ColorType": "RGB with Alpha",
@@ -131,7 +132,7 @@ The `file` parameter is the base64 encoded file which will be cleaned.
         "Interlace": "Noninterlaced"
     },
     "meta_after": {},
-    "download_link": "http://localhost:5000/download/81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/fancy.cleaned.jpg"
+    "download_link": "http://localhost:5000/download/81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161/44deb60b5febbd466e042f4172d36bcc5f7eb2eb6791d6e93191c378a381ae7c/fancy.cleaned.jpg"
 }
 ```
 
@@ -171,7 +172,8 @@ MUST contain more than two files. The max length is configurable
   "download_list": [
     {
         "file_name": "uploaded_file_name.jpg",
-        "key": "uploaded_file_key"
+        "key": "uploaded_file_key",
+        "scret": "uploaded_file_secret"
     }
   ]
 }
@@ -186,6 +188,7 @@ The `key` parameter is the key from a previously uploaded file.
     "output_filename": "files.2cd225d5-2d75-44a2-9f26-e120a87e4279.cleaned.zip",
     "mime": "application/zip",
     "key": "5ee4cf8821226340d3d5ed16bd2e1b435234a9ad218f282b489a85d116e7a4c4",
+    "secret": "44deb60b5febbd466e042f4172d36bcc5f7eb2eb6791d6e93191c378a381ae7c",
     "meta_after": {},
     "download_link": "http://localhost/api/download/5ee4cf8821226340d3d5ed16bd2e1b435234a9ad218f282b489a85d116e7a4c4/files.2cd225d5-2d75-44a2-9f26-e120a87e4279.cleaned.zip"
 }

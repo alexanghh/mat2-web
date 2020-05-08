@@ -53,8 +53,12 @@ def upload_file():
         if not uploaded_file.filename:
             flash('No selected file')
             return redirect(request.url)
+        try:
+            filename, filepath = utils.save_file(uploaded_file, current_app.config['UPLOAD_FOLDER'])
+        except ValueError:
+            flash('Invalid Filename')
+            return redirect(request.url)
 
-        filename, filepath = utils.save_file(uploaded_file, current_app.config['UPLOAD_FOLDER'])
         parser, mime = utils.get_file_parser(filepath)
 
         if parser is None:

@@ -28,11 +28,15 @@ class APIUpload(Resource):
         args = req_parser.parse_args()
         try:
             file_data = base64.b64decode(args['file'])
-        except binascii.Error as err:
-            abort(400, message='Failed decoding file: ' + str(err))
+        except (binascii.Error, ValueError):
+            abort(400, message='Failed decoding file')
 
         file = FileStorage(stream=io.BytesIO(file_data), filename=args['file_name'])
-        filename, filepath = utils.save_file(file, self.upload_folder)
+        try:
+            filename, filepath = utils.save_file(file, self.upload_folder)
+        except ValueError:
+            abort(400, message='Invalid Filename')
+
         parser, mime = utils.get_file_parser(filepath)
 
         if parser is None:

@@ -179,6 +179,18 @@ class Mat2WebTestCase(TestCase):
         self.assertIn(b'.mp2', rv.data)
         self.assertEqual(rv.status_code, 200)
 
+    def test_get_upload_naughty_input(self):
+        rv = self.client.post(
+            '/',
+            data=dict(
+                file=(io.BytesIO(b"a"), '﷽'),
+            ),
+            follow_redirects=True
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Invalid Filename', rv.data)
+
+
 
 if __name__ == '__main__':
     unittest.main()

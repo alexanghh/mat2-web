@@ -70,7 +70,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         self.assertEqual(request.status_code, 400)
         error = request.get_json()['message']
-        self.assertEqual(error, 'Failed decoding file: Incorrect padding')
+        self.assertEqual(error, 'Failed decoding file')
 
     def test_api_not_supported(self):
         request = self.app.post('/api/upload',
@@ -399,6 +399,25 @@ class Mat2APITestCase(unittest.TestCase):
         download_link = request.get_json()['download_link']
         request = app.get(download_link)
         self.assertEqual(code, request.status_code)
+
+    def test_upload_naughty_input(self):
+        request = self.app.post('/api/upload',
+                           data='{"file_name": "\\\\", '
+                                '"file": "\\\\"}',
+                           headers={'content-type': 'application/json'}
+                           )
+        error_message = request.get_json()['message']
+        self.assertEqual(400, request.status_code)
+        self.assertEqual("Invalid Filename", error_message)
+
+        request = self.app.post('/api/upload',
+                                data='{"file_name": "﷽", '
+                                     '"file": "﷽"}',
+                                headers={'content-type': 'application/json'}
+                                )
+        error_message = request.get_json()['message']
+        self.assertEqual(400, request.status_code)
+        self.assertEqual("Failed decoding file", error_message)
 
 
 if __name__ == '__main__':

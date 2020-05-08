@@ -65,6 +65,8 @@ def get_supported_extensions():
 
 def save_file(file, upload_folder):
     filename = secure_filename(file.filename)
+    if not filename:
+        raise ValueError('Invalid Filename')
     filepath = os.path.join(upload_folder, filename)
     file.save(os.path.join(filepath))
     return filename, filepath

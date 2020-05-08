@@ -173,7 +173,7 @@ MUST contain more than two files. The max length is configurable
     {
         "file_name": "uploaded_file_name.jpg",
         "key": "uploaded_file_key",
-        "scret": "uploaded_file_secret"
+        "secret": "uploaded_file_secret"
     }
   ]
 }

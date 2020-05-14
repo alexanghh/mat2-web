@@ -242,7 +242,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         request = self.app.head(response['download_link'])
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(request.headers['Content-Length'], '1596')
+        self.assertTrue(request.headers['Content-Length'])
 
         request = self.app.get(response['download_link'])
         self.assertIn('attachment; filename=files.', request.headers['Content-Disposition'])

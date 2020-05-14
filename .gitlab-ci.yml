@@ -3,6 +3,7 @@ image: debian:testing
 stages:
   - linting
   - test
+  - renovate
   - build_container
 
 variables:
@@ -45,3 +46,13 @@ build-docker:
   only:
     - tags
     - master
+
+renovate:
+  stage: renovate
+  variables:
+    RENOVATE_TOKEN: $GITLAB_API_TOKEN
+  image:
+    name: renovate/renovate:19
+    entrypoint: ['']
+  script:
+    - node /usr/src/app/dist/renovate.js --platform gitlab --endpoint ${CI_API_V4_URL} --token ${GITLAB_API_TOKEN} ${CI_PROJECT_PATH}

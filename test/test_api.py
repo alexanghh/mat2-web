@@ -42,7 +42,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 200)
 
         data = request.get_json()
-        self.assertEqual(data['output_filename'], 'test_name.cleaned.jpg')
+        self.assertEqual(data['inactive_after_sec'], 15 * 60)
         self.assertEqual(data['output_filename'], 'test_name.cleaned.jpg')
         self.assertEqual(data['mime'], 'image/jpeg')
         self.assertEqual(len(data['secret']), 64)
@@ -237,6 +237,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         self.assertIn('files.', response['output_filename'])
         self.assertIn('cleaned.zip', response['output_filename'])
+        self.assertEquals(15 * 60, response['inactive_after_sec'])
         self.assertIn(response['mime'], 'application/zip')
         self.assertEqual(response['meta_after'], {})
 
@@ -387,7 +388,7 @@ class Mat2APITestCase(unittest.TestCase):
         randint_mock.return_value = 0
         self.upload_download_test_jpg_and_assert_response_code(app, 404)
 
-        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '9999'
+        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = str(15 * 60)
 
     def upload_download_test_jpg_and_assert_response_code(self, app, code):
         request = app.post('/api/upload',

@@ -170,7 +170,7 @@ class Mat2WebTestCase(TestCase):
 
         request = app.get(self.get_context_variable('download_uri'))
         self.assertEqual(302, request.status_code)
-        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = '9999'
+        os.environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = str(15*60)
 
     def test_info_page(self):
         rv = self.client.get('/info')
@@ -189,7 +189,6 @@ class Mat2WebTestCase(TestCase):
         )
         self.assertEqual(rv.status_code, 200)
         self.assertIn(b'Invalid Filename', rv.data)
-
 
 
 if __name__ == '__main__':

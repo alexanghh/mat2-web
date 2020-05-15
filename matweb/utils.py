@@ -35,6 +35,7 @@ def check_upload_folder(upload_folder):
 
 
 def return_file_created_response(
+        inactive_after_sec: int,
         output_filename: str,
         mime: str,
         key: str,
@@ -44,6 +45,7 @@ def return_file_created_response(
         download_link: str
 ) -> dict:
     return {
+        'inactive_after_sec': inactive_after_sec,
         'output_filename': output_filename,
         'mime': mime,
         'key': key,
@@ -106,3 +108,7 @@ def is_valid_api_download_file(filename: str, key: str, secret: str, upload_fold
     if hmac.compare_digest(hash_file(complete_path, secret), key) is False:
         abort(400, message='The file hash does not match')
     return complete_path, filepath
+
+
+def get_file_removal_max_age_sec() -> int:
+    return int(os.environ.get('MAT2_MAX_FILE_AGE_FOR_REMOVAL', 15 * 60))

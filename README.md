@@ -110,6 +110,7 @@ The `file` parameter is the base64 encoded file which will be cleaned.
 **Example Response:**
 ```json
 {
+    "inactive_after_sec": 120,
     "output_filename": "fancy.cleaned.jpg",
     "mime": "image/jpg",
     "key": "81a541f9ebc0233d419d25ed39908b16f82be26a783f32d56c381559e84e6161",
@@ -175,6 +176,7 @@ The `key` parameter is the key from a previously uploaded file.
 **Example Response:**
 ```json
 {
+    "inactive_after_sec": 120,
     "output_filename": "files.2cd225d5-2d75-44a2-9f26-e120a87e4279.cleaned.zip",
     "mime": "application/zip",
     "key": "5ee4cf8821226340d3d5ed16bd2e1b435234a9ad218f282b489a85d116e7a4c4",

@@ -42,6 +42,7 @@ class Mat2WebTestCase(unittest.TestCase):
         randint_mock.return_value = 0
         file_removal_scheduler.run_file_removal_job(self.app.config['UPLOAD_FOLDER'])
         self.assertTrue(path.exists(path.join(self.upload_folder, filename)))
+        environ['MAT2_MAX_FILE_AGE_FOR_REMOVAL'] = str(15 * 60)
 
     def tearDown(self):
         shutil.rmtree(self.upload_folder)

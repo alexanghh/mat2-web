@@ -48,6 +48,7 @@ class APIUpload(Resource):
 
         key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, self.upload_folder)
         return utils.return_file_created_response(
+            utils.get_file_removal_max_age_sec(),
             output_filename,
             mime,
             key,
@@ -133,6 +134,7 @@ class APIBulkDownloadCreator(Resource):
             abort(500, message='Unable to clean %s' % mime)
         key, secret, meta_after, output_filename = utils.cleanup(parser, zip_path, self.upload_folder)
         return {
+                   'inactive_after_sec': utils.get_file_removal_max_age_sec(),
                    'output_filename': output_filename,
                    'mime': mime,
                    'key': key,

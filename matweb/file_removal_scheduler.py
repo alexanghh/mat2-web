@@ -4,6 +4,8 @@ import sys
 import os
 import random
 
+from matweb import utils
+
 
 def run_file_removal_job(upload_folder_path):
     if random.randint(0, 10) == 0:
@@ -18,7 +20,7 @@ def delete_file_when_too_old(filepath):
     last_time = time.time() - file_mod_time
 
     # if file is older than our configured max timeframe, delete it
-    if last_time > int(os.environ.get('MAT2_MAX_FILE_AGE_FOR_REMOVAL', 15 * 60)):
+    if last_time > utils.get_file_removal_max_age_sec():
         try:
             os.remove(filepath)
         except OSError:

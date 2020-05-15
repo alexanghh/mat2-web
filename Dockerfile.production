@@ -20,6 +20,10 @@ RUN set -x \
         systemd \
         ffmpeg \
         mat2 \
+        gir1.2-gdkpixbuf-2.0 \
+        gir1.2-poppler-0.18 \
+        gir1.2-rsvg-2.0 \
+        libimage-exiftool-perl \
         uwsgi \
         uwsgi-plugin-python3 \
         python3-pip \

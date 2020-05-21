@@ -28,7 +28,7 @@ mypy:
 bandit:
   image:
     name: $CI_REGISTRY/georg/mat2-ci-images:linting
-  stage: lintin
+  stage: linting
   script:
     - bandit -r ./matweb/ main.py
 

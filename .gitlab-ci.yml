@@ -25,6 +25,13 @@ mypy:
   - pip3 install mypy
   - mypy --ignore-missing-imports main.py
 
+bandit:
+  image:
+    name: $CI_REGISTRY/georg/mat2-ci-images:linting
+  stage: lintin
+  script:
+    - bandit -r ./matweb/ main.py
+
 tests:debian:
   stage: test
   script:

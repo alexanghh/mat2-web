@@ -68,6 +68,9 @@ systemctl restart nginx/apache/…
 
 It should now be working.
 
+Note for reverse proxies: Include the Host header to ensure all generated urls are correct.
+e.g. for Nginx: `proxy_set_header Host $host;`
+
 # Deploy via Ansible
 
 If you happen to be using [Ansible](https://www.ansible.com/), there's an

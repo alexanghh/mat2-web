@@ -6,10 +6,9 @@ import zipfile
 from uuid import uuid4
 
 from flask import after_this_request, send_from_directory
-from flask_restful import Resource, reqparse, abort, request
+from flask_restful import Resource, reqparse, abort, request, url_for
 from cerberus import Validator
 from werkzeug.datastructures import FileStorage
-from urllib.parse import urljoin
 
 from matweb import file_removal_scheduler, utils
 
@@ -55,7 +54,13 @@ class APIUpload(Resource):
             secret,
             meta,
             meta_after,
-            urljoin(request.host_url, '%s/%s/%s/%s/%s' % ('api', 'download', key, secret, output_filename))
+            url_for(
+                'apidownload',
+                key=key,
+                secret=secret,
+                filename=output_filename,
+                _external=True
+            )
         )
 
 
@@ -140,9 +145,12 @@ class APIBulkDownloadCreator(Resource):
                    'key': key,
                    'secret': secret,
                    'meta_after': meta_after,
-                   'download_link': urljoin(
-                       request.host_url,
-                       '%s/%s/%s/%s/%s' % ('api', 'download', key, secret, output_filename)
+                   'download_link': url_for(
+                       'apidownload',
+                       key=key,
+                       secret=secret,
+                       filename=output_filename,
+                       _external=True
                    )
                }, 201
 

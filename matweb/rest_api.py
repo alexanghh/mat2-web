@@ -160,5 +160,6 @@ class APIBulkDownloadCreator(Resource):
 
 
 class APISupportedExtensions(Resource):
+    @swag_from('./oas/extension.yml')
     def get(self):
         return utils.get_supported_extensions()

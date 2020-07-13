@@ -26,8 +26,6 @@ parameters:
 
 responses:
   200:
-    description: "An object containing all info about the cleaned file"
-    schema:
-      $ref: '#/definitions/UploadResponse'
+    description: ""
   404:
-    description: "The filename, key or secret are wrong"
+    description: "The filename, key or secret are wrong or the link is too old and the file has been deleted"

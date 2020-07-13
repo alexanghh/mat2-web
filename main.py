@@ -33,7 +33,7 @@ def create_app(test_config=None):
 
     # Restful API hookup
     api = Api(app)
-    swagger = Swagger(app)
+    Swagger(app)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
     api.add_resource(
         rest_api.APIUpload,

@@ -97,7 +97,7 @@ If you go to https://matweb.info/apidocs you can find a Swagger documentation.
 
 ## Upload Endpoint
 
-**Endpoint:** `/api/upload`
+**Endpoint:** `/api/upload`__
 
 **HTTP Verbs:**  POST
 

@@ -3,7 +3,6 @@ import jinja2
 
 from matweb import utils, rest_api, frontend
 from flask import Flask
-from flask_restful import Api
 from flask_cors import CORS
 from flasgger import Swagger
 

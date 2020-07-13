@@ -93,7 +93,7 @@ If you want to add/remove dependencies you have to rebuild the container.
 
 # RESTful API
 
-If you go to https://matweb.info/apidocs you can find a Swagger documentation.
+If you go to https://api.matweb.info/apidocs/ you can find a Swagger documentation.
 
 ## Upload Endpoint
 

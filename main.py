@@ -14,6 +14,10 @@ def create_app(test_config=None):
     app.config['UPLOAD_FOLDER'] = os.environ.get('MAT2_WEB_DOWNLOAD_FOLDER', './uploads/')
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
+    app.config['SWAGGER'] = {
+        'title': 'Mat2 Web API',
+        'version': '1.0.0',
+    }
     # optionally load settings from config.py
     app.config.from_object('config')
 

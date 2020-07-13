@@ -64,7 +64,7 @@ class APIUpload(Resource):
                 filename=output_filename,
                 _external=True
             )
-        )
+        ), 201
 
 
 class APIDownload(Resource):
@@ -110,6 +110,7 @@ class APIBulkDownloadCreator(Resource):
     }
     v = Validator(schema)
 
+    @swag_from('./oas/bulk.yml')
     def post(self):
         utils.check_upload_folder(self.upload_folder)
         data = request.json

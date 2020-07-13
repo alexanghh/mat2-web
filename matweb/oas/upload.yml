@@ -22,7 +22,7 @@ parameters:
         example: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
 
 responses:
-  200:
+  201:
     description: "An object containing all info about the cleaned file"
     schema:
       $ref: '#/definitions/UploadResponse'

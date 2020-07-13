@@ -1,0 +1,48 @@
+---
+tags:
+  - "File Bulk Download"
+summary: 'Group multiple files to download as one zip archive'
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "The files that will be combined for one single download"
+  required: true
+  schema:
+    $ref: '#/definitions/BulkBody'
+
+responses:
+  201:
+    description: "A new resource to download all files as one archive"
+    schema:
+      $ref: '#/definitions/UploadResponse'
+  400:
+    description: "Invalid input"
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  500:
+    description: "Unable to clean the file"
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+
+definitions:
+  BulkBody:
+    type: "object"
+    properties:
+      download_list:
+        type: "array"
+        description: "An object containing the files you want to create a bulk download for"
+        items:
+          $ref: '#/definitions/BulkFile'
+  BulkFile:
+    type: "object"
+    properties:
+      file_name:
+        type: "string"
+      key:
+        type: "string"
+      secret:
+        type: "string"

@@ -17,6 +17,7 @@ def create_app(test_config=None):
     app.config['SWAGGER'] = {
         'title': 'Mat2 Web API',
         'version': '1.0.0',
+        'basePath': '/api'
     }
     # optionally load settings from config.py
     app.config.from_object('config')
@@ -32,25 +33,9 @@ def create_app(test_config=None):
     app.register_blueprint(frontend.routes)
 
     # Restful API hookup
-    api = Api(app)
+    app.register_blueprint(rest_api.api_bp)
     Swagger(app)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
-    api.add_resource(
-        rest_api.APIUpload,
-        '/api/upload',
-        resource_class_kwargs={'upload_folder': app.config['UPLOAD_FOLDER']}
-    )
-    api.add_resource(
-        rest_api.APIDownload,
-        '/api/download/<string:key>/<string:secret>/<string:filename>',
-        resource_class_kwargs={'upload_folder': app.config['UPLOAD_FOLDER']}
-    )
-    api.add_resource(
-        rest_api.APIBulkDownloadCreator,
-        '/api/download/bulk',
-        resource_class_kwargs={'upload_folder': app.config['UPLOAD_FOLDER']}
-    )
-    api.add_resource(rest_api.APISupportedExtensions, '/api/extension')
 
     return app
 

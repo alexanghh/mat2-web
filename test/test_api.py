@@ -39,7 +39,7 @@ class Mat2APITestCase(unittest.TestCase):
         )
         self.assertEqual(request.headers['Content-Type'], 'application/json')
         self.assertEqual(request.headers['Access-Control-Allow-Origin'], 'origin1.gnu')
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, 201)
 
         data = request.get_json()
         self.assertEqual(data['inactive_after_sec'], 15 * 60)
@@ -141,7 +141,7 @@ class Mat2APITestCase(unittest.TestCase):
                                      'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
                                 headers={'content-type': 'application/json'}
                                 )
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, 201)
         data = request.get_json()
 
         request = self.app.get('http://localhost/api/download/161/'
@@ -192,7 +192,7 @@ class Mat2APITestCase(unittest.TestCase):
                                      'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
                                 headers={'content-type': 'application/json'}
                                 )
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, 201)
         upload_one = request.get_json()
 
         request = self.app.post('/api/upload',
@@ -201,7 +201,7 @@ class Mat2APITestCase(unittest.TestCase):
                                      'mO0vqpQDwAENAGxOnU0jQAAAABJRU5ErkJggg=="}',
                                 headers={'content-type': 'application/json'}
                                 )
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, 201)
         upload_two = request.get_json()
 
         post_body = {

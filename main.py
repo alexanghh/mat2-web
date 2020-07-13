@@ -32,9 +32,10 @@ def create_app(test_config=None):
 
     template = dict(
         swaggerUiPrefix=LazyString(lambda: request.environ.get('HTTP_X_SCRIPT_NAME', '')),
-        schemes=[LazyString(lambda: 'https' if request.is_secure else 'http')],
+        schemes=['https', 'http'],
         version='1',
         host=LazyString(lambda: request.host),
+        basePath='/',
         info={
            'title': 'Mat2 Web API',
            'version': '1',

@@ -2,9 +2,9 @@ import os
 import jinja2
 
 from matweb import utils, rest_api, frontend
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
-from flasgger import Swagger
+from flasgger import Swagger, LazyString, LazyJSONEncoder
 
 
 def create_app(test_config=None):
@@ -13,11 +13,6 @@ def create_app(test_config=None):
     app.config['UPLOAD_FOLDER'] = os.environ.get('MAT2_WEB_DOWNLOAD_FOLDER', './uploads/')
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
     app.config['CUSTOM_TEMPLATES_DIR'] = 'custom_templates'
-    app.config['SWAGGER'] = {
-        'title': 'Mat2 Web API',
-        'version': '1.0.0',
-        'basePath': '/api'
-    }
     # optionally load settings from config.py
     app.config.from_object('config')
 
@@ -33,7 +28,20 @@ def create_app(test_config=None):
 
     # Restful API hookup
     app.register_blueprint(rest_api.api_bp)
-    Swagger(app)
+    app.json_encoder = LazyJSONEncoder
+
+    template = dict(
+        swaggerUiPrefix=LazyString(lambda: request.environ.get('HTTP_X_SCRIPT_NAME', '')),
+        schemes=[LazyString(lambda: 'https' if request.is_secure else 'http')],
+        version='1',
+        host=LazyString(lambda: request.host),
+        info={
+           'title': 'Mat2 Web API',
+           'version': '1',
+           'description': 'Mat2 Web RESTful API documentation',
+        }
+    )
+    Swagger(app, template=template)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
 
     return app

@@ -15,8 +15,8 @@ from flasgger import swag_from
 from matweb import file_removal_scheduler, utils
 
 
-api_bp = Blueprint('api_bp', __name__, url_prefix='/api/')
-api = Api(api_bp)
+api_bp = Blueprint('api_bp', __name__)
+api = Api(api_bp, prefix='/api')
 
 
 class APIUpload(Resource):

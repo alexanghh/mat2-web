@@ -72,6 +72,7 @@ class APIDownload(Resource):
     def __init__(self, **kwargs):
         self.upload_folder = kwargs['upload_folder']
 
+    @swag_from('./oas/download.yml')
     def get(self, key: str, secret: str, filename: str):
         complete_path, filepath = utils.is_valid_api_download_file(filename, key, secret, self.upload_folder)
         # Make sure the file is NOT deleted on HEAD requests

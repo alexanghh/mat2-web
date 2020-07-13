@@ -1,0 +1,33 @@
+---
+tags:
+  - "File Download"
+summary: 'Download a single cleaned file or zip archive containing multiple files'
+consumes:
+  - "application/json"
+produces:
+  - "*/*"
+parameters:
+- name: "key"
+  in: "path"
+  description: "A key generated for that resource"
+  required: true
+  type: "string"
+- name: "secret"
+  in: "path"
+  description: "A secret generated for that resource"
+  required: true
+  type: "string"
+- name: "filename"
+  in: "path"
+  description: "the filename of the cleaned file"
+  required: true
+  type: "string"
+
+
+responses:
+  200:
+    description: "An object containing all info about the cleaned file"
+    schema:
+      $ref: '#/definitions/UploadResponse'
+  404:
+    description: "The filename, key or secret are wrong"

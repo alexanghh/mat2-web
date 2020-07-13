@@ -31,9 +31,7 @@ def create_app(test_config=None):
     app.json_encoder = LazyJSONEncoder
 
     template = dict(
-        swaggerUiPrefix=LazyString(lambda: request.environ.get('HTTP_X_SCRIPT_NAME', '')),
         schemes=['https', 'http'],
-        version='1',
         host=LazyString(lambda: request.host),
         basePath='/',
         info={

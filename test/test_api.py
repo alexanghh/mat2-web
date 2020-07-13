@@ -237,7 +237,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         self.assertIn('files.', response['output_filename'])
         self.assertIn('cleaned.zip', response['output_filename'])
-        self.assertEquals(15 * 60, response['inactive_after_sec'])
+        self.assertEqual(15 * 60, response['inactive_after_sec'])
         self.assertIn(response['mime'], 'application/zip')
         self.assertEqual(response['meta_after'], {})
 
@@ -248,7 +248,7 @@ class Mat2APITestCase(unittest.TestCase):
         request = self.app.get(response['download_link'])
         self.assertIn('attachment; filename=files.', request.headers['Content-Disposition'])
         zip_response = zipfile.ZipFile(BytesIO(request.data))
-        self.assertEquals(2, len(zip_response.namelist()))
+        self.assertEqual(2, len(zip_response.namelist()))
         for name in zip_response.namelist():
             self.assertIn('.cleaned.jpg', name)
         self.assertEqual(request.status_code, 200)

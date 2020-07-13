@@ -9,6 +9,8 @@ from flask import after_this_request, send_from_directory
 from flask_restful import Resource, reqparse, abort, request, url_for
 from cerberus import Validator
 from werkzeug.datastructures import FileStorage
+from flasgger import swag_from
+
 
 from matweb import file_removal_scheduler, utils
 
@@ -17,7 +19,8 @@ class APIUpload(Resource):
     
     def __init__(self, **kwargs):
         self.upload_folder = kwargs['upload_folder']
-        
+
+    @swag_from('./oas/upload.yml')
     def post(self):
         utils.check_upload_folder(self.upload_folder)
         req_parser = reqparse.RequestParser()

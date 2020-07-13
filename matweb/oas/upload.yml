@@ -1,0 +1,80 @@
+---
+tags:
+  - "File Upload (Metadata removal)"
+summary: 'Upload a single file which will be cleaned from metadata'
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "The file that will be cleaned from metadata. Note that the file must be base64 encoded"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      file_name:
+        type: "string"
+        example: 'my_example.jpg'
+      file:
+        type: "string"
+        example: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+
+responses:
+  200:
+    description: "An object containing all info about the cleaned file"
+    schema:
+      $ref: '#/definitions/UploadResponse'
+  400:
+    description: "Invalid input"
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  415:
+    description: "Unsupported file type"
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  500:
+    description: "Unable to clean the file"
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+
+definitions:
+  UploadResponse:
+    type: "object"
+    properties:
+      inactive_after_sec:
+        type: "integer"
+        format: "int64"
+        description: "Defines after how many seconds the download wont be available"
+      output_filename:
+        type: "string"
+        description: "The resulting filename after metadata removal"
+      mime:
+        type: "string"
+        description: "The mime type of the cleaned file"
+      key:
+        type: "string"
+        description: "A key used to guarantee file integrity"
+      secret:
+        type: "string"
+        description: "A secret used to guarantee file integrity"
+      meta:
+        type: "object"
+        description: "An object of the removed metadata where key indicates the metadata type"
+        items:
+          type: "string"
+      meta_after:
+        type: "object"
+        description: "An object of the remaining metadata where key indicates the metadata type"
+        items:
+          type: "string"
+      download_link:
+        type: "string"
+        description: "The link to download the cleaned file"
+  ErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "A description of the error"

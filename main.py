@@ -5,6 +5,7 @@ from matweb import utils, rest_api, frontend
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
+from flasgger import Swagger
 
 
 def create_app(test_config=None):
@@ -28,6 +29,7 @@ def create_app(test_config=None):
 
     # Restful API hookup
     api = Api(app)
+    swagger = Swagger(app)
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
     api.add_resource(
         rest_api.APIUpload,

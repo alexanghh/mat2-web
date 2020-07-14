@@ -11,10 +11,36 @@ This is an online version of [mat2](https://0xacab.org/jvoisin/mat2).
 Keep in mind that this is a beta version, don't rely on it for anything
 serious, yet.
 
+# Introduction
+
+Mat2-web offers a Restful API which enables consumers to upload their files
+which will be cleaned using [mat2](https://0xacab.org/jvoisin/mat2) and can 
+be downloaded afterward.
+
+Therefore this project has two components:
+
+
+
+* Restful API [Mat2-web](https://0xacab.org/jvoisin/mat2-web)
+* Single Page Application Frontend [mat2-quasar-frontend](https://0xacab.org/jfriedli/mat2-quasar-frontend)
+
+**To setup the application you'll need to deploy both parts.**
+
+There are several ways for deployment:
+
+1) [Manually](#manually)
+2) [Ansible](#deploy-via-ansible)
+3) [Containers](#container)
+
+# Table Of Contents
+
+[[_TOC_]]
+
 # Demo instance
 
-There is a demo instance deployed a [mat2-web.dustri.org](https://mat2-web.dustri.org).
+There is a demo instance deployed a [matweb.info](https://matweb.info).
 Please don't upload any sensitive files to it.
+
 
 # Vue Frontend
 ![Frontend GIF Preview](https://0xacab.org/jfriedli/mat2-quasar-frontend/raw/2dd5de537088d67fe4167bf5b2e1f5dacf2fa537/mat-frontend.gif?inline=true)
@@ -23,6 +49,8 @@ the RESTful API of this project. As a fallback for non JS users it redirects to 
 To set it up checkout the [Readme](https://0xacab.org/jfriedli/mat2-quasar-frontend/blob/master/README.md).
 
 # How to deploy it?
+
+## Manually
 
 mat2 is available in [Debian stable](https://packages.debian.org/stable/mat2).
 
@@ -47,17 +75,7 @@ Nginx is the recommended web engine, but you can also use Apache if you prefer,
 by copying [this file](https://0xacab.org/jvoisin/mat2-web/tree/master/config/apache2.config)
 to your `/etc/apache2/sites-enabled/mat2-web` file.
 
-Configure the following environment variables:
- 
- -  `MAT2_ALLOW_ORIGIN_WHITELIST=https://myhost1.org https://myhost2.org`
- Note that you can add multiple hosts from which you want to accept API requests. These need to be separated by
-a space. **IMPORTANT:** The default value if the variable is not set is: `Access-Control-Allow-Origin: *`
- - `MAT2_MAX_FILES_BULK_DOWNLOAD=10` Max number of files that can be grouped for a bulk download.
- Note: Each file has a max file size of 16mb
-
- - `MAT2_MAX_FILE_AGE_FOR_REMOVAL=900` Seconds a file in the upload folder is kept. 
-  After that it will be deleted. Default `15 * 60`
- - `MAT2_WEB_DOWNLOAD_FOLDER` Define the upload folder path. Defaults to:  `./uploads/`
+Make sure you configured the necessary [environment variables](#configuration).
  
 Finally, restart uWSGI and your web server:
 
@@ -71,7 +89,7 @@ It should now be working.
 Note for reverse proxies: Include the Host header to ensure all generated urls are correct.
 e.g. for Nginx: `proxy_set_header Host $host;`
 
-# Deploy via Ansible
+## Deploy via Ansible
 
 If you happen to be using [Ansible](https://www.ansible.com/), there's an
 Ansible role to deploy mat2-web on Debian, thanks to the amazing
@@ -85,15 +103,60 @@ collector cronjob to remove leftover files. Besides, it can create a
 the uploads folder, to ensure that the uploaded files won't be recoverable
 between reboots.
 
-# Development
-Install docker and docker-compose and then run `docker-compose up` to setup
-the docker dev environment. Mat2-web is now accessible on your host machine at `localhost:5000`.
-Every code change triggers a restart of the app. 
-If you want to add/remove dependencies you have to rebuild the container.
+## Container
+
+There are two Dockerfiles present in this repository. 
+The file called `Dockerfile.development` is used for development 
+and `Dockerfile.production` is used for production deployments.
+
+You can find the automated container builds in the registry of this 
+repository: https://0xacab.org/jvoisin/mat2-web/container_registry
+
+Make sure you configured the necessary [environment variables](#configuration).
+
+
+### Building the production image using Docker
+Build command: `docker build -f Dockerfile.production -t mat-web .`
+
+Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload --security-opt=no-new-privileges --security-opt=seccomp=./config/seccomp.json mat-web:latest`
+
+This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
+
+### Building the production image using Podman
+Build: `podman build -f Dockerfile.production -t matweb-podman .`
+
+Run: `podman run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  --security-opt=no-new-privileges --security-opt=seccomp=./config/seccomp.json matweb-podman:latest`
+
+
+# Configuration
+
+The default settings from `main.py` may be overridden by adding a `config.py`
+file and add custom values for the relevant flask config variables. E.g.:
+
+```
+MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
+```
+## Configurable Environment Variables
+
+| Env Variable                  | Default Value | Explanation                                                                                                                                                                                                                                                                                                                                  |
+|-------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| MAT2_ALLOW_ORIGIN_WHITELIST   | *             | Define which hosts are included in the Access-Control-Allow-Origin header. Note that you can add multiple hosts from which you want to accept API requests e.g. https://myhost1.org https://myhost2.org. These need to be separated by a space. **IMPORTANT**: The default value if the variable is not set is: `Access-Control-Allow-Origin: *` |
+| MAT2_MAX_FILES_BULK_DOWNLOAD  |            10 | Max number of files that can be grouped for a bulk download                                                                                                                                                                                                                                                                                  |
+| MAT2_MAX_FILE_AGE_FOR_REMOVAL |           900 | Seconds a file in the upload folder is kept. After that it will be deleted                                                                                                                                                                                                                                                                   |
+| MAT2_WEB_DOWNLOAD_FOLDER      | ./uploads/    | Define the upload folder path.                                                                                                                                                                                                                                                                                                               |
+## Custom templates
+
+You can override the default templates from `templates/` by putting replacements
+into the directory path that's configured in `app.config['CUSTOM_TEMPLATES_DIR']`
+(default `custom_templates/`).
 
 # RESTful API
 
 If you go to https://api.matweb.info/apidocs/ you can find a Swagger documentation.
+
+<p>
+<details>
+<summary>Click this for API Endpoints explanation</summary>
 
 ## Upload Endpoint
 
@@ -191,49 +254,24 @@ The `key` parameter is the key from a previously uploaded file.
 }
 ```
 
-# Docker
+</details>
+</p>
 
-There are two Dockerfiles present in this repository. The file called `Dockerfile.development` is used for development 
-and `Dockerfile.production` is used for production deployments.
 
-You can find the automated docker builds in the registry of this 
-repository: https://0xacab.org/jvoisin/mat2-web/container_registry
-
-### Building the production image
-Build command: `docker build -f Dockerfile.production -t mat-web .`
-
-Run it: `docker run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload --security-opt=no-new-privileges --security-opt=seccomp=./config/seccomp.json mat-web:latest`
-
-This does mount the upload folder as tmpfs and servers the app on `localhost:8181`.
-
-##### Podman
-Build: `podman build -f Dockerfile.production -t matweb-podman .`
-
-Run: `podman run -ti -p8181:8080 --read-only  --tmpfs /tmp --tmpfs /run/uwsgi --tmpfs=/app/upload  --security-opt=no-new-privileges --security-opt=seccomp=./config/seccomp.json matweb-podman:latest`
-
-# Configuration
-
-The default settings from `main.py` may be overridden by adding a `config.py`
-file and add custom values for the relevant flask config variables. E.g.:
-
-```
-MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
-```
-
+# Development / Contribute
+Install docker and docker-compose and then run `docker-compose up` to setup
+the docker dev environment. Mat2-web is now accessible on your host machine at `localhost:5000`.
+Every code change triggers a restart of the app. 
+If you want to add/remove dependencies you have to rebuild the container.
 See [Flask configuration docs](http://exploreflask.com/en/latest/configuration.html)
 for further information.
 
-# Custom templates
-
-You can override the default templates from `templates/` by putting replacements
-into the directory path that's configured in `app.config['CUSTOM_TEMPLATES_DIR']`
-(default `custom_templates/`).
 
 # Threat model
 
 - An attacker in possession of the very same file that a user wants to clean,
-	along with its names, can perform a denial of service by continually
-	requesting this file, and getting it before the user.
+	along with its names, can't perform a denial of service by continually
+	requesting this file.
 - An attacker in possession of only the name of a file that a user wants to
 	clean can't perform a denial of service attack, since the path to download
 	the cleaned file is not only dependent of the name, but also the content.

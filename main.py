@@ -1,5 +1,6 @@
 import os
 import jinja2
+import yaml
 
 from matweb import utils, rest_api, frontend
 from flask import Flask, request
@@ -30,17 +31,31 @@ def create_app(test_config=None):
     app.register_blueprint(rest_api.api_bp)
     app.json_encoder = LazyJSONEncoder
 
+    dirname = os.path.dirname(__file__)
+    with open(os.path.join(dirname, 'matweb/oas/components.yml')) as file:
+        components = yaml.full_load(file)
+
     template = dict(
-        schemes=['https', 'http'],
-        host=LazyString(lambda: request.host),
-        basePath='/',
+        servers=[
+            {
+                'url': LazyString(lambda: request.host_url),
+                'description': 'References the current running server'
+            }
+        ],
         info={
            'title': 'Mat2 Web API',
            'version': '1',
            'description': 'Mat2 Web RESTful API documentation',
-        }
+        },
+        components=components
     )
-    Swagger(app, template=template)
+    swagger_config = Swagger.DEFAULT_CONFIG
+    swagger_config['swagger_ui_bundle_js'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js'
+    swagger_config['swagger_ui_standalone_preset_js'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js'
+    swagger_config['swagger_ui_css'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui.css'
+    swagger_config['openapi'] = "3.0.3"
+    Swagger(app, template=template, config=swagger_config)
+
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
 
     return app

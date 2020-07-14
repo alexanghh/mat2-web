@@ -6,47 +6,32 @@ description: "This endpoint allows you to bulk download several files
               which you uploaded beforehand. Note that the `download_list`
               MUST contain more than two files. The max length is configurable
               (default is 10)."
-consumes:
-  - "application/json"
-produces:
-  - "application/json"
-parameters:
-- in: "body"
-  name: "body"
+requestBody:
   description: "The files that will be combined for one single download"
   required: true
-  schema:
-    $ref: '#/definitions/BulkBody'
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/BulkBody'
 
 responses:
   201:
     description: "A new resource to download all files as one archive"
-    schema:
-      $ref: '#/definitions/UploadResponse'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UploadResponse'
   400:
     description: "Invalid input"
-    schema:
-      $ref: '#/definitions/ErrorResponse'
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/ErrorAtLeastTwoResponse'
+            - $ref: '#/components/schemas/ErrorResponse'
   500:
     description: "Unable to clean the file"
-    schema:
-      $ref: '#/definitions/ErrorResponse'
-
-definitions:
-  BulkBody:
-    type: "object"
-    properties:
-      download_list:
-        type: "array"
-        description: "An object containing the files you want to create a bulk download for"
-        items:
-          $ref: '#/definitions/BulkFile'
-  BulkFile:
-    type: "object"
-    properties:
-      file_name:
-        type: "string"
-      key:
-        type: "string"
-      secret:
-        type: "string"
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'

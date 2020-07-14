@@ -1,0 +1,68 @@
+schemas:
+  BulkBody:
+    type: "object"
+    properties:
+      download_list:
+        type: "array"
+        description: "An object containing the files you want to create a bulk download for"
+        items:
+          $ref: '#/components/schemas/BulkFile'
+  BulkFile:
+    type: "object"
+    properties:
+      file_name:
+        type: "string"
+      key:
+        type: "string"
+      secret:
+        type: "string"
+  ErrorAtLeastTwoResponse:
+    type: "object"
+    properties:
+      message:
+        type: "object"
+        description: "A description of the error"
+        properties:
+          download_list:
+            type: "array"
+            items:
+              type: "string"
+              example: "Min length is 2"
+  UploadResponse:
+    type: "object"
+    properties:
+      inactive_after_sec:
+        type: "integer"
+        format: "int64"
+        description: "Defines after how many seconds the download wont be available"
+      output_filename:
+        type: "string"
+        description: "The resulting filename after metadata removal"
+      mime:
+        type: "string"
+        description: "The mime type of the cleaned file"
+      key:
+        type: "string"
+        description: "A key used to guarantee file integrity"
+      secret:
+        type: "string"
+        description: "A secret used to guarantee file integrity"
+      meta:
+        type: "object"
+        description: "An object of the removed metadata where key indicates the metadata type"
+        items:
+          type: "string"
+      meta_after:
+        type: "object"
+        description: "An object of the remaining metadata where key indicates the metadata type"
+        items:
+          type: "string"
+      download_link:
+        type: "string"
+        description: "The link to download the cleaned file"
+  ErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "A description of the error"

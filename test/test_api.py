@@ -7,6 +7,7 @@ import zipfile
 from six import BytesIO
 
 from unittest.mock import patch
+from openapi_spec_validator import validate_spec
 
 import main
 
@@ -420,6 +421,9 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(400, request.status_code)
         self.assertEqual("Failed decoding file", error_message)
 
+    def test_valid_opena_api_spec(self):
+        spec = self.app.get('apispec_1.json').get_json()
+        validate_spec(spec)
 
 if __name__ == '__main__':
     unittest.main()

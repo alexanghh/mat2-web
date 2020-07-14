@@ -2,30 +2,39 @@
 tags:
   - "File Download"
 summary: 'Download a single cleaned file or zip archive containing multiple files'
-consumes:
-  - "application/json"
-produces:
-  - "*/*"
 parameters:
-- name: "key"
-  in: "path"
-  description: "A key generated for that resource"
-  required: true
-  type: "string"
-- name: "secret"
-  in: "path"
-  description: "A secret generated for that resource"
-  required: true
-  type: "string"
-- name: "filename"
-  in: "path"
-  description: "the filename of the cleaned file"
-  required: true
-  type: "string"
+  - name: "key"
+    in: "path"
+    description: "A key generated for that resource"
+    required: true
+    schema:
+      type: "string"
+  - name: "secret"
+    in: "path"
+    description: "A secret generated for that resource"
+    required: true
+    schema:
+      type: "string"
+  - name: "filename"
+    in: "path"
+    description: "the filename of the cleaned file"
+    required: true
+    schema:
+      type: "string"
 
 
 responses:
   200:
-    description: ""
+    description: "The cleaned file as attachment so a browser downloads the file directly"
+    content:
+      "*/*":
+        schema:
+          format: binary
+  400:
+    description: "Invalid input"
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
   404:
     description: "The filename, key or secret are wrong or the link is too old and the file has been deleted"

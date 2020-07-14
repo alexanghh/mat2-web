@@ -106,6 +106,8 @@ class APIBulkDownloadCreator(Resource):
     def post(self):
         utils.check_upload_folder(current_app.config['UPLOAD_FOLDER'])
         data = request.json
+        if not data:
+            abort(400, message="Post Body Required")
         if not self.v.validate(data):
             abort(400, message=self.v.errors)
         # prevent the zip file from being overwritten

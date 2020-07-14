@@ -263,6 +263,14 @@ class Mat2APITestCase(unittest.TestCase):
         request = self.app.get(upload_two['download_link'])
         self.assertEqual(request.status_code, 404)
 
+    def test_api_bulk_empty_body(self):
+        request = self.app.post(
+            '/api/download/bulk',
+        )
+        self.assertEqual(400, request.status_code)
+        error_message = request.get_json()['message']
+        self.assertEqual("Post Body Required", error_message)
+
     def test_api_bulk_download_validation(self):
         post_body = {
             u'download_list': [

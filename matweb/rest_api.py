@@ -30,22 +30,26 @@ class APIUpload(Resource):
         args = req_parser.parse_args()
         try:
             file_data = base64.b64decode(args['file'])
-        except (binascii.Error, ValueError):
+        except (binascii.Error, ValueError) as e:
+            current_app.logger.error('Upload - Decoding base64 file %s', str(e))
             abort(400, message='Failed decoding file')
 
         file = FileStorage(stream=io.BytesIO(file_data), filename=args['file_name'])
         try:
             filename, filepath = utils.save_file(file, current_app.config['UPLOAD_FOLDER'])
         except ValueError:
+            current_app.logger.error('Upload - Invalid file name')
             abort(400, message='Invalid Filename')
 
         parser, mime = utils.get_file_parser(filepath)
 
         if parser is None:
+            current_app.logger.error('Upload - Invalid mime type %s', mime)
             abort(415, message='The type %s is not supported' % mime)
 
         meta = parser.get_meta()
         if not parser.remove_all():
+            current_app.logger.error('Upload - Cleaning failed with mime: %s', mime)
             abort(500, message='Unable to clean %s' % mime)
 
         key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
@@ -140,7 +144,9 @@ class APIBulkDownloadCreator(Resource):
         data = request.json
         if not data:
             abort(400, message="Post Body Required")
+            current_app.logger.error('BulkDownload -  Missing Post Body')
         if not self.v.validate(data):
+            current_app.logger.error('BulkDownload -  Missing Post Body: %s', str(self.v.errors))
             abort(400, message=self.v.errors)
         # prevent the zip file from being overwritten
         zip_filename = 'files.' + str(uuid4()) + '.zip'
@@ -157,16 +163,19 @@ class APIBulkDownloadCreator(Resource):
                 try:
                     cleaned_files_zip.write(complete_path)
                     os.remove(complete_path)
-                except ValueError:
+                except ValueError as e:
+                    current_app.logger.error('BulkDownload -  Creating archive failed: %s', str(e))
                     abort(400, message='Creating the archive failed')
 
             try:
                 cleaned_files_zip.testzip()
             except ValueError as e:
-                abort(400, message=str(e))
+                current_app.logger.error('BulkDownload -  Validating Zip failed: %s', str(e))
+                abort(400, message='Validating Zip failed')
 
         parser, mime = utils.get_file_parser(zip_path)
         if not parser.remove_all():
+            current_app.logger.error('BulkDownload -  Unable to clean Zip')
             abort(500, message='Unable to clean %s' % mime)
         key, secret, meta_after, output_filename = utils.cleanup(parser, zip_path, current_app.config['UPLOAD_FOLDER'])
         return {

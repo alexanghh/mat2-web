@@ -57,7 +57,7 @@ def create_app(test_config=None):
     Swagger(app, template=template, config=swagger_config)
 
     CORS(app, resources={r"/api/*": {"origins": utils.get_allow_origin_header_value()}})
-
+    app.logger.info('Matweb started')
     return app
 
 

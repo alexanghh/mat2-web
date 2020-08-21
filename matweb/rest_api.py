@@ -84,6 +84,38 @@ class APIDownload(Resource):
         return send_from_directory(current_app.config['UPLOAD_FOLDER'], filepath, as_attachment=True)
 
 
+class APIClean(Resource):
+    @swag_from('./oas/remove_metadata.yml')
+    def post(self):
+        if 'file' not in request.files:
+            abort(400, message='No file part')
+
+        uploaded_file = request.files['file']
+        if not uploaded_file.filename:
+            abort(400, message='No selected `file`')
+        try:
+            filename, filepath = utils.save_file(uploaded_file, current_app.config['UPLOAD_FOLDER'])
+        except ValueError:
+            abort(400, message='Invalid Filename')
+
+        parser, mime = utils.get_file_parser(filepath)
+
+        if parser is None:
+            abort(415, message='The type %s is not supported' % mime)
+
+        if parser.remove_all() is not True:
+            abort(500, message='Unable to clean %s' % mime)
+
+        _, _, _, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
+
+        @after_this_request
+        def remove_file(response):
+            os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], output_filename))
+            return response
+
+        return send_from_directory(current_app.config['UPLOAD_FOLDER'], output_filename, as_attachment=True)
+
+
 class APIBulkDownloadCreator(Resource):
     schema = {
         'download_list': {
@@ -167,6 +199,10 @@ api.add_resource(
 api.add_resource(
     APIDownload,
     '/download/<string:key>/<string:secret>/<string:filename>'
+)
+api.add_resource(
+    APIClean,
+    '/remove_metadata'
 )
 api.add_resource(
     APIBulkDownloadCreator,

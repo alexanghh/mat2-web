@@ -1,0 +1,41 @@
+---
+tags:
+  - "Metadata removal cleaning in one request (automated clients)"
+summary: 'Upload a single file which will be cleaned from metadata and returned directly'
+requestBody:
+  description: "The file that will be cleaned from metadata and the cleaned file is returned directly"
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+responses:
+  '200':
+    description: "The cleaned file"
+    content:
+      "*/*":
+        schema:
+          type: string
+          format: binary
+  400:
+    description: "Invalid input"
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+  415:
+    description: "Unsupported file type"
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+  500:
+    description: "Unable to clean the file"
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'

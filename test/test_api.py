@@ -1,13 +1,15 @@
-import unittest
-import tempfile
 import json
 import os
 import shutil
+import tempfile
+import unittest
 import zipfile
-from six import BytesIO
+import io
 
 from unittest.mock import patch
+
 from openapi_spec_validator import validate_spec
+from six import BytesIO
 
 import main
 
@@ -432,6 +434,61 @@ class Mat2APITestCase(unittest.TestCase):
     def test_valid_opena_api_spec(self):
         spec = self.app.get('apispec_1.json').get_json()
         validate_spec(spec)
+
+    def test_remove_metadata(self):
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                file=(io.BytesIO(b""), 'test.txt'),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers['Content-Disposition'], 'attachment; filename=test.cleaned.txt')
+        self.assertEqual(r.headers['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(r.data, b'')
+
+    def test_remove_metdata_validation(self):
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                fileNotExisting=(io.BytesIO(b""), 'test.random'),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(r.get_json()['message'], 'No file part')
+        self.assertEqual(r.status_code, 400)
+
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                file=(io.BytesIO(b""), ''),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(r.get_json()['message'], 'No selected `file`')
+        self.assertEqual(r.status_code, 400)
+
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                file=(io.BytesIO(b""), '../../'),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(r.get_json()['message'], 'Invalid Filename')
+        self.assertEqual(r.status_code, 400)
+
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                file=(io.BytesIO(b""), 'test.random'),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(r.get_json()['message'], 'The type None is not supported')
+        self.assertEqual(r.status_code, 415)
+
 
 if __name__ == '__main__':
     unittest.main()

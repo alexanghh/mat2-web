@@ -254,6 +254,19 @@ The `key` parameter is the key from a previously uploaded file.
 }
 ```
 
+**Endpoint:** `/api/remove_metadata`
+
+**HTTP Verbs:**  POST
+
+**CURL Example:** 
+```bash
+ curl -F 'file=@/path/to/my/test.txt' http://localhost:5000/api/remove_metadata
+```
+The `file` parameter is the file which will be cleaned.
+
+**Example Response:**
+The cleaned file
+
 </details>
 </p>
 

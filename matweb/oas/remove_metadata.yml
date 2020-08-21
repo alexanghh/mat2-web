@@ -1,9 +1,9 @@
 ---
 tags:
-  - "Metadata removal cleaning in one request (automated clients)"
+  - "Metadata removal in a single request (non-human clients)"
 summary: 'Upload a single file which will be cleaned from metadata and returned directly'
 requestBody:
-  description: "The file that will be cleaned from metadata and the cleaned file is returned directly"
+  description: "The file that will be cleaned from metadata"
   required: true
   content:
     multipart/form-data:

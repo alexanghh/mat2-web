@@ -92,22 +92,27 @@ class APIClean(Resource):
     @swag_from('./oas/remove_metadata.yml')
     def post(self):
         if 'file' not in request.files:
+            current_app.logger.error('Clean - No file part')
             abort(400, message='No file part')
 
         uploaded_file = request.files['file']
         if not uploaded_file.filename:
+            current_app.logger.error('Clean - No selected `file`')
             abort(400, message='No selected `file`')
         try:
             filename, filepath = utils.save_file(uploaded_file, current_app.config['UPLOAD_FOLDER'])
         except ValueError:
+            current_app.logger.error('Clean - Invalid Filename')
             abort(400, message='Invalid Filename')
 
         parser, mime = utils.get_file_parser(filepath)
 
         if parser is None:
+            current_app.logger.error('Clean - The type %s is not supported', mime)
             abort(415, message='The type %s is not supported' % mime)
 
         if parser.remove_all() is not True:
+            current_app.logger.error('Clean - Unable to clean %s', mime)
             abort(500, message='Unable to clean %s' % mime)
 
         _, _, _, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])

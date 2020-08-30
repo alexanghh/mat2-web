@@ -99,7 +99,7 @@ def get_file_paths(filename, upload_folder):
 
 def is_valid_api_download_file(filename: str, key: str, secret: str, upload_folder: str) -> [str, str]:
     if filename != secure_filename(filename):
-        current_app.logger.error('Insecure filename %', filename)
+        current_app.logger.error('Insecure filename %s', filename)
         abort(400, message='Insecure filename')
 
     complete_path, filepath = get_file_paths(filename, upload_folder)

@@ -3,7 +3,7 @@ import os
 import hashlib
 import mimetypes as mtype
 
-from flask_restful import abort
+from flask_restful import abort, current_app
 from libmat2 import parser_factory
 from werkzeug.utils import secure_filename
 
@@ -31,6 +31,7 @@ def hash_file(filepath: str, secret: str) -> str:
 
 def check_upload_folder(upload_folder):
     if not os.path.exists(upload_folder):
+        current_app.logger.info('Upload folder does not exist - creating it')
         os.mkdir(upload_folder)
 
 
@@ -98,14 +99,17 @@ def get_file_paths(filename, upload_folder):
 
 def is_valid_api_download_file(filename: str, key: str, secret: str, upload_folder: str) -> [str, str]:
     if filename != secure_filename(filename):
+        current_app.logger.error('Insecure filename %', filename)
         abort(400, message='Insecure filename')
 
     complete_path, filepath = get_file_paths(filename, upload_folder)
 
     if not os.path.exists(complete_path):
+        current_app.logger.error('File not found')
         abort(404, message='File not found')
 
     if hmac.compare_digest(hash_file(complete_path, secret), key) is False:
+        current_app.logger.error('The file hash does not match')
         abort(400, message='The file hash does not match')
     return complete_path, filepath
 

@@ -31,7 +31,7 @@ class APIUpload(Resource):
         try:
             file_data = base64.b64decode(args['file'])
         except (binascii.Error, ValueError) as e:
-            current_app.logger.error('Upload - Decoding base64 file %s', str(e))
+            current_app.logger.error('Upload - Decoding base64 file %s', e)
             abort(400, message='Failed decoding file')
 
         file = FileStorage(stream=io.BytesIO(file_data), filename=args['file_name'])
@@ -169,13 +169,13 @@ class APIBulkDownloadCreator(Resource):
                     cleaned_files_zip.write(complete_path)
                     os.remove(complete_path)
                 except ValueError as e:
-                    current_app.logger.error('BulkDownload -  Creating archive failed: %s', str(e))
+                    current_app.logger.error('BulkDownload -  Creating archive failed: %s', e)
                     abort(400, message='Creating the archive failed')
 
             try:
                 cleaned_files_zip.testzip()
             except ValueError as e:
-                current_app.logger.error('BulkDownload -  Validating Zip failed: %s', str(e))
+                current_app.logger.error('BulkDownload -  Validating Zip failed: %s', e)
                 abort(400, message='Validating Zip failed')
 
         parser, mime = utils.get_file_parser(zip_path)

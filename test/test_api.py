@@ -135,6 +135,7 @@ class Mat2APITestCase(unittest.TestCase):
                                 headers={'content-type': 'application/json'}
                                 )
         error = request.get_json()['message']
+        self.assertEqual(request.status_code, 400)
         self.assertEqual(error, 'Unable to clean application/zip')
 
     def test_api_download(self):

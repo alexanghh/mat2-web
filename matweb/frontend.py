@@ -71,22 +71,23 @@ def upload_file():
             current_app.logger.error('Unsupported type %s', mime)
             return redirect(url_for('routes.upload_file'))
 
-        meta = parser.get_meta()
+        try:
+            if parser.remove_all() is not True:
+                flash('Unable to clean %s' % mime)
+                current_app.logger.error('Unable to clean %s', mime)
+                return redirect(url_for('routes.upload_file'))
+            meta = parser.get_meta()
+            key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
 
-        if parser.remove_all() is not True:
-            flash('Unable to clean %s' % mime)
-            current_app.logger.error('Unable to clean %s', mime)
-            return redirect(url_for('routes.upload_file'))
-
-        key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
-
-        return render_template(
-            'download.html',
-            mimetypes=mime_types,
-            meta=meta,
-            download_uri=url_for('routes.download_file', key=key, secret=secret, filename=output_filename),
-            meta_after=meta_after,
-        )
+            return render_template(
+                'download.html',
+                mimetypes=mime_types,
+                meta=meta,
+                download_uri=url_for('routes.download_file', key=key, secret=secret, filename=output_filename),
+                meta_after=meta_after,
+            )
+        except (RuntimeError, ValueError):
+            flash('The type %s could no be cleaned' % mime)
 
     max_file_size = int(current_app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024)
     return render_template('index.html', max_file_size=max_file_size, mimetypes=mime_types)

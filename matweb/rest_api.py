@@ -46,29 +46,31 @@ class APIUpload(Resource):
         if parser is None:
             current_app.logger.error('Upload - Invalid mime type %s', mime)
             abort(415, message='The type %s is not supported' % mime)
-
-        meta = parser.get_meta()
-        if not parser.remove_all():
+        try:
+            if not parser.remove_all():
+                raise ValueError()
+            meta = parser.get_meta()
+            key, secret, meta_after, output_filename = utils.cleanup(parser, filepath,
+                                                                     current_app.config['UPLOAD_FOLDER'])
+            return utils.return_file_created_response(
+                utils.get_file_removal_max_age_sec(),
+                output_filename,
+                mime,
+                key,
+                secret,
+                meta,
+                meta_after,
+                url_for(
+                    'api_bp.apidownload',
+                    key=key,
+                    secret=secret,
+                    filename=output_filename,
+                    _external=True
+                )
+            ), 201
+        except (ValueError, RuntimeError) as e:
             current_app.logger.error('Upload - Cleaning failed with mime: %s', mime)
-            abort(500, message='Unable to clean %s' % mime)
-
-        key, secret, meta_after, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
-        return utils.return_file_created_response(
-            utils.get_file_removal_max_age_sec(),
-            output_filename,
-            mime,
-            key,
-            secret,
-            meta,
-            meta_after,
-            url_for(
-                'api_bp.apidownload',
-                key=key,
-                secret=secret,
-                filename=output_filename,
-                _external=True
-            )
-        ), 201
+            abort(400, message='Unable to clean %s' % mime)
 
 
 class APIDownload(Resource):

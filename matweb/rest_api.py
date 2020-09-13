@@ -68,7 +68,7 @@ class APIUpload(Resource):
                     _external=True
                 )
             ), 201
-        except (ValueError, RuntimeError) as e:
+        except (ValueError, RuntimeError):
             current_app.logger.error('Upload - Cleaning failed with mime: %s', mime)
             abort(400, message='Unable to clean %s' % mime)
 

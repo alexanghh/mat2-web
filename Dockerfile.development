@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 ADD . /mat2-web
 WORKDIR /mat2-web
 RUN apt-get update \

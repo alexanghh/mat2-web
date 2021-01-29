@@ -175,7 +175,7 @@ class Mat2WebTestCase(TestCase):
     def test_info_page(self):
         rv = self.client.get('/info')
         self.assertIn(b'What are metadata?', rv.data)
-        self.assertIn(b'.asc', rv.data)
+        self.assertIn(b'.jpg', rv.data)
         self.assertIn(b'.mp2', rv.data)
         self.assertEqual(rv.status_code, 200)
 

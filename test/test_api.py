@@ -96,7 +96,7 @@ class Mat2APITestCase(unittest.TestCase):
 
         extensions = json.loads(rv.data.decode('utf-8'))
         self.assertIn('.pot', extensions)
-        self.assertIn('.asc', extensions)
+        self.assertIn('.jpg', extensions)
         self.assertIn('.png', extensions)
         self.assertIn('.zip', extensions)
 

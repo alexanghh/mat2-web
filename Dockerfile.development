@@ -9,7 +9,10 @@ RUN apt-get update \
     gir1.2-gdkpixbuf-2.0 \
     libimage-exiftool-perl \
     libgirepository1.0-dev \
+    nodejs npm \
 &&  pip install -r requirements.txt \
+&&  npm i \
+&&  npm install --global postcss postcss-cli \
 &&  rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 CMD flask run --host=0.0.0.0
 

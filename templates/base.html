@@ -13,25 +13,17 @@
 </head>
 
 <body class="flex flex-col h-screen justify-between">
-    <header class="h-20 w-full bg-blue-100 my-0 flex justify-center">
+    <header class="h-20 w-full bg-blue-light my-0 flex justify-center">
         <a href='.' class="mt-8">
             <img class='max-h-28' src="{{ url_for('static', filename='logo.png') }}" alt="mat2 logo" />
         </a>
     </header>
 
-
-
-    <section class="mb-auto mt-8 pt-8">
+    <section class="mb-auto mt-12 pt-8">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
-        <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-red-500">
-            <span class="text-xl inline-block mr-5 align-middle">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </span>
+        <div class="text-white px-6 py-4 border-0 relative mb-4 bg-red-500">
             <span class="inline-block align-middle mr-8">
                 {{ message }}
             </span>

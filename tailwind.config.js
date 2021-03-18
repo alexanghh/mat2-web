@@ -7,6 +7,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                transparent: 'transparent',
+                current: 'currentColor',
                 blue: {
                     light: '#f4f7fb',
                     DEFAULT: '#99c1f1',
@@ -14,12 +16,10 @@ module.exports = {
                 }
             },
             fontFamily: {
-                sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+                sans: ['Rubik'],
             },
         },
     },
     variants: {},
-    plugins: [
-        require('@tailwindcss/forms'),
-    ],
+    plugins: [],
 }

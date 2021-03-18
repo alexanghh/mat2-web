@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="flex justify-center">
-        <div class="max-w-lg rounded overflow-hidden shadow-lg pb-4">
-            <div class="px-6 py-4">
-              <div class="font-bold text-xl mb-2">Remove Metadata</div>
-              <p class="text-gray-700 text-base">
+<div class="flex justify-center">
+    <div class="w-50 rounded overflow-hidden shadow-lg pb-4">
+        <div class="px-6 py-4">
+            <div class="font-bold text-xl mb-2">Remove Metadata</div>
+            <p class="text-gray-700 text-base">
                 The file you see is just the tip of the iceberg. Remove the hidden metadata.
             </p>
-            </div>
-            <div class="px-6 pt-4 pb-2 grid grid-rows-1">
-                <form method="post" enctype="multipart/form-data" class="grid grid-rows-1">
-                    <input type="file" name="file" id="upload_file" accept="{{ mimetypes |  join(', ') }}">
-                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" value="Upload">Remove Metadata</button>
-                </form>
-            </div>
-          </div>
+        </div>
+        <div class="px-6 pt-4 pb-2 grid grid-rows-1">
+            <form method="post" enctype="multipart/form-data" class="grid grid-rows-1">
+                <input type="file" name="file" id="upload_file" accept="{{ mimetypes |  join(', ') }}">
+                <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"
+                    value="Upload">Remove Metadata</button>
+            </form>
+        </div>
     </div>
-    <button
-        class="p-0 w-10 h-10 absolute sm:bottom-8 md:bottom-16 sm:right-8 md:right-16  bg-blue-300 hover:bg-blue-400 rounded-full active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
-    >
-        <a href="/info" role="link" class="w-6 h-6 text-white inline-block font-bold">
-            ?
-        </a>
-    </button>
+</div>
+<button
+    class="p-0 w-10 h-10 absolute sm:bottom-8 md:bottom-16 sm:right-8 md:right-16  bg-blue-300 hover:bg-blue-400 rounded-full active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none">
+    <a href="/info" role="link" class="w-6 h-6 text-white inline-block font-bold">
+        ?
+    </a>
+</button>
 {% endblock %}

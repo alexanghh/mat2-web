@@ -1,69 +1,86 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="shadowed-box u-text-center u-center-block">
-        <h2 class="uk-text-center">Metadata removed</h2>
-        {% if not meta_after %}
-            <p class="uk-text-center">
-                Successfully removed the metadata
-            </p>
-        {% endif %}
-        <div class="uk-flex uk-flex-center">
-            <div>
-                <a class="uk-flex-1" href='{{ download_uri }}'>
-                    <button class="uk-button uk-button-primary">
-                        ⇩ download cleaned file
-                    </button>
-                </a>
+<div class="grid grid-rows-1 w-50">
+    <div class="flex justify-center">
+        <div class="rounded overflow-hidden shadow-lg p-4">
+            {% if not meta_after %}
+            <div class="px-6 py-4 grid grid-rows-1">
+                <h1 class="font-bold text-xl mb-2">Metadata removed</h1>
             </div>
-        </div>
-
-
-        <p>
-            {% if meta_after %}
-                <div class="uk-alert uk-alert-warning" uk-alert>
-                    <p>
-                        <b>Could not</b> remove all the metadata
-                    </p>
-                </div>
-                <h3>
-                    Remaining Metadata
-                </h3>
-                <dl class="uk-description-list uk-description-list-divider">
-                    {% for key, value in meta_after.items() %}
-                        <dt>
-                            {{ key }}
-                        </dt>
-                        <dd>
-                            {{ value }}
-                        </dd>
-                    {% endfor %}
-                </dl>
-            {% endif %}
-        </p>
-
-    {% if meta %}
-        <h3>
-            Removed Metadata
-        </h3>
-        <dl class="uk-description-list uk-description-list-divider">
-            {% for key, value in meta.items() %}
-                <dt>
-                    {{ key }}
-                </dt>
-                <dd>
-                    {{ value }}
-                </dd>
-            {% endfor %}
-        </dl>
-    {% else %}
-        <div class="uk-alert uk-alert-success">
-            <p>
-                Not a single metadata was found, odds are that your file was already clean!
+            <p class="text-gray-700 text-base text-center">
+                Successfully removed the metadata
+                <svg class="max-h-40 fill-current text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
             </p>
+            {% endif %}
+
+            {% if meta_after %}
+            <div class="px-6 py-4 grid grid-rows-1">
+                <h1 class="font-bold text-xl mb-2">Metadata partially removed</h1>
+            </div>
+            <p class="text-gray-700 text-base text-center">
+                Could not remove all the metadata
+                <svg class="max-h-40 fill-current text-yellow-600" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z"
+                        clip-rule="evenodd" />
+                </svg>
+
+            </p>
+            {% endif %}
+
+            <a class="uk-flex-1" href='{{ download_uri }}'>
+                <button
+                    class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center"
+                >
+                    <svg class="w-4 h-4 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path style="fill: white" d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                    </svg>
+                    <span>Download Cleaned File</span>
+                </button>
+            </a>
         </div>
-    {% endif %}
     </div>
-
+    {% if meta_after %}
+    <div class="mx-auto w-full">
+        <div class="bg-white shadow-md rounded my-6">
+            <table class="text-left w-full border-collapse">
+                <div class="px-6 py-4 grid grid-rows-1">
+                    <h1 class="font-bold text-xl mb-2">Remaining Metadata</h1>
+                </div>
+                <thead>
+                    <tr>
+                        <th
+                            class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">
+                            Key
+                        </th>
+                        <th
+                            class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">
+                            Value
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in meta_after.items() %}
+                    <tr class="hover:bg-grey-lighter">
+                        <td class="py-4 px-6 border-b border-grey-light">
+                            {{ key }}
+                        </td>
+                        <td class="py-4 px-6 border-b border-grey-light">
+                            {{ value }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
-

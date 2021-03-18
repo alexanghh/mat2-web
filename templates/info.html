@@ -1,60 +1,75 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <h1>
-            What are metadata?
-        </h1>
-        <p>
-            Metadata consists of information that characterizes your file. They answer background questions about who, how, when, and what. This gives your file multi-faceted documentation.
-            <a href="https://0xacab.org/jvoisin/mat2/blob/master/README.md">
-                https://0xacab.org/jvoisin/mat2/blob/master/README.md (09.2019)
-            </a>
-        </p>
-
-        <p>
-            The metadata of your file leak a lot of information about you. For example, cameras store file information about the time of a shot and which camera was used for it. Documents, such as PDF or Words, automatically add author or company information to the document. You don't want to publish all this information at all?
-        </p>
-
-        <p>
-            This is precisely the job of MAT2: getting rid, as much as possible, of metadata.
-        </p>
-
-        <h1>
-            MAT2 locally
-        </h1>
-        <p>
-            Please note that while we do not keep a copy of your file, there is no way that you could be certain about this: Act accordingly. Due to this warning, please consider running MAT2 locally on your device.
-        </p>
-
-        <h2>
-            MAT2 is available in pip
-        </h2>
-        <p>
-            <pre class="  language-javascript"><code class="  language-javascript">pip3 install mat2</code></pre>
-        </p>
-        <h2>
-            MAT2 on Debian
-        </h2>
-        <p>
-            MAT2 is available on Debian.
-        </p>
-        <p>
-            <pre class="  language-javascript"><code class="  language-javascript">sudo apt install mat2</code></pre>
-        </p>
-        <p>
-            More info: <a href="https://packages.debian.org/sid/mat2">https://packages.debian.org/sid/mat2</a>
-        </p>
-
-        <h1>
-            Supported file formats
-        </h1>
-        <p>
-            {% for extension in extensions %}
-                <span class="uk-badge">
-                    {{ extension }}
-                </span>
-            {% endfor %}
-        </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-2 md:p-16 break-words max-w-full">
+        <section>
+            <h1 class="grid grid-rows-1">
+                <div class="font-light text-4xl mb-4">        
+                    What are metadata
+                </div>
+            </h1>
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                Metadata consists of information that characterizes your file. They answer background questions about who, how, when, and what. This gives your file multi-faceted documentation.
+                <a class="text-blue-dark" href="https://0xacab.org/jvoisin/mat2/blob/master/README.md">
+                    https://0xacab.org/jvoisin/mat2/blob/master/README.md (09.2019)
+                </a>
+            </p>
+    
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                The metadata of your file leak a lot of information about you. For example, cameras store file information about the time of a shot and which camera was used for it. Documents, such as PDF or Words, automatically add author or company information to the document. You don't want to publish all this information at all?
+            </p>
+    
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                This is precisely the job of MAT2: getting rid, as much as possible, of metadata.
+            </p>
+    
+            <h1 class="grid grid-rows-1">
+                <div class="font-light text-4xl mb-4">        
+                    MAT2 locally
+                </div>
+            </h1>
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                Please note that while we do not keep a copy of your file, there is no way that you could be certain about this: Act accordingly. Due to this warning, please consider running MAT2 locally on your device.
+            </p>
+    
+            <h2 class="grid grid-rows-1">
+                <div class="font-light text-2xl mb-4">        
+                    MAT2 is available in pip
+                </div>
+            </h2>
+            <p>
+                <pre class="language-javascript"><code class="language-javascript">pip3 install mat2</code></pre>
+            </p>
+    
+            <h2 class="grid grid-rows-1">
+                <div class="font-light text-2xl mb-4">        
+                    MAT2 on Debian
+                </div>
+            </h2>
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                MAT2 is available on Debian.
+            </p>
+    
+            <p>
+                <pre class="max-w-max language-javascript"><code class="language-javascript">sudo apt install mat2</code></pre>
+            </p>
+            <p class="text-gray-700 text-base text-opacity-80 mb-4">
+                More info: <a class="text-blue-dark" href="https://packages.debian.org/sid/mat2">https://packages.debian.org/sid/mat2</a>
+            </p>
+        </section>
+        <section>
+            <h1 class="grid grid-rows-1">
+                <div class="font-light text-4xl mb-4">        
+                    Supported file formats
+                </div>
+            </h1>
+            <div>
+                {% for extension in extensions %}
+                    <span class="rounded-full bg-blue text-white p-2 mb-2 mr-2 rounded float-left">
+                        {{ extension }}
+                    </span>
+                {% endfor %}
+                </div>
+        </section>
 
     </div>
 

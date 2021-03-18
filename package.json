@@ -1,0 +1,28 @@
+{
+  "name": "mat2-web",
+  "version": "0.5.0",
+  "description": "A web version of mat2! ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@0xacab.org:jvoisin/mat2-web.git"
+  },
+  "keywords": [
+    "mat2",
+    "metadata",
+    "web",
+    "flask",
+    "Rest"
+  ],
+  "author": "jvoisin, jfriedli",
+  "license": "MIT",
+  "dependencies": {
+    "@fullhuman/postcss-purgecss": "^4.0.2",
+    "autoprefixer": "^10.2.5",
+    "postcss": "^8.2.8",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.0.4"
+  }
+}

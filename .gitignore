@@ -2,3 +2,6 @@ __pycache__
 config.py
 custom_templates
 uploads
+node_modules
+static/dist
+static/.webassets-cache

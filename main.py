@@ -6,6 +6,7 @@ from matweb import utils, rest_api, frontend
 from flask import Flask, request
 from flask_cors import CORS
 from flasgger import Swagger, LazyString, LazyJSONEncoder
+from flask_assets import Bundle, Environment
 
 
 def create_app(test_config=None):
@@ -21,6 +22,10 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     # Non JS Frontend
+    assets = Environment(app)
+    css = Bundle("src/main.css", output="dist/main.css", filters="postcss")
+    assets.register("css", css)
+    css.build()
     app.jinja_loader = jinja2.ChoiceLoader([  # type: ignore
         jinja2.FileSystemLoader(app.config['CUSTOM_TEMPLATES_DIR']),
         app.jinja_loader,

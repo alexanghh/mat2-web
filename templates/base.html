@@ -10,20 +10,14 @@
             <link rel="stylesheet" href="{{ ASSET_URL }}">
         {% endassets %}
     </head>
-<body>
-    <header class="">
-        <div class="container">
-            <div>
-                <div>
-                    <a href='.'>
-                        <img class='logo' src="{{ url_for('static', filename='logo.png') }}" alt="mat2 logo"/>
-                    </a>
-                </div>
-            </div>
-        </div>
+<body class="flex flex-col h-screen justify-between">
+    <header class="h-20 w-full bg-blue-100 my-0 flex justify-center">
+        <a href='.' class="mt-8">
+            <img class='max-h-28' src="{{ url_for('static', filename='logo.png') }}" alt="mat2 logo"/>
+        </a>
     </header>
 
-    <div class="container mx-auto">
+    <div class="container h-10 mt-8">
         <div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -39,15 +33,11 @@
         </div>
     </div>
 
-    <div>
-        <section>
-            <div>
-                {% block content %}{% endblock %}
-            </div>
-        </section>
-    </div>
+    <section class="container mb-auto mx-auto mt-8">
+        {% block content %}{% endblock %}
+    </section>
 
-    <footer>
+    <footer class="h-10 flex justify-center">
         © <a href='https://dustri.org'>jvoisin</a> -
         <a href='https://0xacab.org/jvoisin/mat2-web'>source</a> -
         ♥

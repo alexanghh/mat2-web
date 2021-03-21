@@ -63,6 +63,13 @@ mat2 is available in [Debian stable](https://packages.debian.org/stable/mat2).
 # mkdir ./mat2-web/uploads/
 # chown -R www-data:www-data ./mat2-web
 ```
+### Build the CSS file
+
+```bash
+npm i
+npm install --global postcss postcss-cli
+npm run build:css
+```
 
 Since [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) isn't fun to
 configure, feel free to copy

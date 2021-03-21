@@ -9,6 +9,26 @@
     {% assets 'css' %}
     <link rel="stylesheet" href="{{ ASSET_URL }}">
     {% endassets %}
+
+     <!-- Search Engine -->
+     <meta name="description" content="Keep your data, trash your meta!">
+     <meta name="image" content="{{ url_for('static', filename='og.png', _external=True) }}">
+     <!-- Schema.org for Google -->
+     <meta itemprop="name" content="MAT2 Web">
+     <meta itemprop="description" content="Keep your data, trash your meta!">
+     <meta itemprop="image" content="{{ url_for('static', filename='og.png', _external=True) }}">
+     <!-- Twitter -->
+     <meta name="twitter:card" content="summary">
+     <meta name="twitter:title" content="MAT2 Web">
+     <meta name="twitter:description" content="Keep your data, trash your meta!">
+     <meta name="twitter:image:src" content="{{ url_for('static', filename='og.png', _external=True) }}">
+     <!-- Open Graph general (Facebook, Pinterest & Google+) -->
+     <meta name="og:title" content="MAT2 Web">
+     <meta name="og:description" content="Keep your data, trash your meta!">
+     <meta name="og:image" content="{{ url_for('static', filename='og.png', _external=True) }}">
+     <meta name="og:url" content="{{ url_for('routes.upload_file', _external=True) }}">
+     <meta name="og:site_name" content="MAT2 Web">
+     <meta name="og:type" content="website">
 </head>
 
 <body class="flex flex-col h-screen justify-between">

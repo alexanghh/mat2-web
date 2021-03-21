@@ -38,7 +38,7 @@
         </a>
     </header>
 
-    <section class="mb-auto mt-12 pt-8">
+    <main class="mb-auto mt-12 pt-8">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
@@ -52,7 +52,7 @@
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </section>
+    </main>
 
     <footer class="h-10 flex justify-center">
         <a class="flex justify-center" target="_blank" rel="noreferrer" href="https://0xacab.org/jvoisin/mat2-web" class="text-blue-dark">

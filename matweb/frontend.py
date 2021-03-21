@@ -87,7 +87,7 @@ def upload_file():
                 meta_after=meta_after,
             )
         except (RuntimeError, ValueError):
-            flash('The type %s could no be cleaned' % mime)
+            flash('The type %s could not be cleaned' % mime)
 
     max_file_size = int(current_app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024)
     return render_template('index.html', max_file_size=max_file_size, mimetypes=mime_types)

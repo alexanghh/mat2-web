@@ -23,7 +23,7 @@ def create_app(test_config=None):
 
     # Non JS Frontend
     assets = Environment(app)
-    css = Bundle("src/main.css", output="dist/main.css", filters="postcss")
+    css = Bundle("src/main.css", output="dist/main.css")
     assets.register("css", css)
     css.build()
     app.jinja_loader = jinja2.ChoiceLoader([  # type: ignore

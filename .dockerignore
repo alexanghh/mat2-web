@@ -2,6 +2,4 @@ uploads
 node_modules
 static/dist
 static/.webassets-cache
-*.js
-*.json
 *.md

@@ -1,5 +1,11 @@
+# Build the needed css files in an intermediate container
+FROM node:14-buster AS static_web_assets_build
+WORKDIR /var/www/mat2-web
+COPY . /var/www/mat2-web
+RUN npm install \
+    && npm install --global postcss \
+    && npm run build:css
 # https://github.com/nginxinc/docker-nginx-unprivileged/blob/master/stable/buster/Dockerfile
-
 From debian:buster-slim
 
 LABEL maintainer="Mat-Web Co-Maintainer <jan.friedli@immerda.ch>"
@@ -7,6 +13,7 @@ LABEL maintainer="Mat-Web Co-Maintainer <jan.friedli@immerda.ch>"
 WORKDIR /var/www/mat2-web
 
 COPY . /var/www/mat2-web
+COPY --from=static_web_assets_build /var/www/mat2-web/static/dist ./static/dist
 
 ENV MAT2_WEB_DOWNLOAD_FOLDER /app/upload
 
@@ -38,6 +45,9 @@ RUN set -x \
     && mkdir -p /var/cache/nginx \
     && chown -R 101:0 /var/cache/nginx \
     && chmod -R g+w /var/cache/nginx \
+    && mkdir -p /var/www/mat2-web/static/.webassets-cache \
+    && chown -R 101:0 /var/www/mat2-web/static/.webassets-cache \
+    && chmod -R g+w /var/www/mat2-web/static/.webassets-cache \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log \
     && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \

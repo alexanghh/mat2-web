@@ -3,7 +3,7 @@
   "version": "0.5.0",
   "description": "A web version of mat2! ",
   "scripts": {
-    "build:css": "postcss static/src/main.css -o static/dist/main.css"
+    "build:css": "postcss static/src/main.css -o static/dist/main.css --env=production"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "@fullhuman/postcss-purgecss": "^4.0.2",
     "@tailwindcss/forms": "^0.2.1",
     "autoprefixer": "^10.2.5",
+    "cssnano": "^4.1.10",
     "postcss": "^8.2.8",
     "postcss-cli": "^8.3.1",
     "tailwindcss": "^2.0.4"

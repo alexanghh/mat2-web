@@ -86,7 +86,7 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 415)
 
         error = request.get_json()['message']
-        self.assertEqual(error, 'The type application/pdf is not supported')
+        self.assertEqual(error, 'The filetype is not supported')
 
     def test_api_supported_extensions(self):
         rv = self.app.get('/api/extension')
@@ -487,7 +487,7 @@ class Mat2APITestCase(unittest.TestCase):
             ),
             follow_redirects=False
         )
-        self.assertEqual(r.get_json()['message'], 'The type None is not supported')
+        self.assertEqual(r.get_json()['message'], 'The filetype is not supported')
         self.assertEqual(r.status_code, 415)
 
 

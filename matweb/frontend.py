@@ -64,11 +64,11 @@ def upload_file():
             current_app.logger.error('Invalid Filename in upload')
             return redirect(request.url)
 
-        parser, mime = utils.get_file_parser(filepath)
-
-        if parser is None:
-            flash('The type %s is not supported' % mime)
-            current_app.logger.error('Unsupported type %s', mime)
+        try:
+            parser, mime = utils.get_file_parser(filepath)
+        except ValueError:
+            flash('The filetype is not supported')
+            current_app.logger.error('Unsupported filetype',)
             return redirect(url_for('routes.upload_file'))
 
         try:

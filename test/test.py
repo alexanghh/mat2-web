@@ -63,7 +63,7 @@ class Mat2WebTestCase(TestCase):
                 data=dict(
                     file=(io.BytesIO(b""), 'test.pdf'),
                     ), follow_redirects=True)
-        self.assertIn(b'The type application/pdf is not supported',
+        self.assertIn(b'The filetype is not supported',
                 rv.data)
         self.assertEqual(rv.status_code, 200)
 

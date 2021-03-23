@@ -41,14 +41,11 @@ class APIUpload(Resource):
             current_app.logger.error('Upload - Invalid file name')
             abort(400, message='Invalid Filename')
 
-        parser, mime = utils.get_file_parser(filepath)
-
-        if parser is None:
-            current_app.logger.error('Upload - Invalid mime type %s', mime)
-            abort(415, message='The type %s is not supported' % mime)
         try:
+            parser, mime = utils.get_file_parser(filepath)
             if not parser.remove_all():
-                raise ValueError()
+                current_app.logger.error('Upload - Cleaning failed with mime: %s', mime)
+                abort(400, message='Unable to clean %s' % mime)
             meta = parser.get_meta()
             key, secret, meta_after, output_filename = utils.cleanup(parser, filepath,
                                                                      current_app.config['UPLOAD_FOLDER'])
@@ -68,7 +65,10 @@ class APIUpload(Resource):
                     _external=True
                 )
             ), 201
-        except (ValueError, RuntimeError):
+        except ValueError:
+            current_app.logger.error('Upload - Invalid mime type')
+            abort(415, message='The filetype is not supported')
+        except RuntimeError:
             current_app.logger.error('Upload - Cleaning failed with mime: %s', mime)
             abort(400, message='Unable to clean %s' % mime)
 
@@ -107,17 +107,18 @@ class APIClean(Resource):
             current_app.logger.error('Clean - Invalid Filename')
             abort(400, message='Invalid Filename')
 
-        parser, mime = utils.get_file_parser(filepath)
-
-        if parser is None:
-            current_app.logger.error('Clean - The type %s is not supported', mime)
-            abort(415, message='The type %s is not supported' % mime)
-
-        if parser.remove_all() is not True:
+        try:
+            parser, mime = utils.get_file_parser(filepath)
+            if parser is None:
+                raise ValueError()
+            parser.remove_all()
+            _, _, _, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
+        except ValueError:
+            current_app.logger.error('Upload - Invalid mime type')
+            abort(415, message='The filetype is not supported')
+        except RuntimeError:
             current_app.logger.error('Clean - Unable to clean %s', mime)
             abort(500, message='Unable to clean %s' % mime)
-
-        _, _, _, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
 
         @after_this_request
         def remove_file(response):
@@ -180,26 +181,31 @@ class APIBulkDownloadCreator(Resource):
                 current_app.logger.error('BulkDownload -  Validating Zip failed: %s', e)
                 abort(400, message='Validating Zip failed')
 
-        parser, mime = utils.get_file_parser(zip_path)
-        if not parser.remove_all():
+        try:
+            parser, mime = utils.get_file_parser(zip_path)
+            parser.remove_all()
+            key, secret, meta_after, output_filename = utils.cleanup(parser, zip_path, current_app.config['UPLOAD_FOLDER'])
+            return {
+                       'inactive_after_sec': utils.get_file_removal_max_age_sec(),
+                       'output_filename': output_filename,
+                       'mime': mime,
+                       'key': key,
+                       'secret': secret,
+                       'meta_after': meta_after,
+                       'download_link': url_for(
+                           'api_bp.apidownload',
+                           key=key,
+                           secret=secret,
+                           filename=output_filename,
+                           _external=True
+                       )
+                   }, 201
+        except ValueError:
+            current_app.logger.error('BulkDownload - Invalid mime type')
+            abort(415, message='The filetype is not supported')
+        except RuntimeError:
             current_app.logger.error('BulkDownload -  Unable to clean Zip')
             abort(500, message='Unable to clean %s' % mime)
-        key, secret, meta_after, output_filename = utils.cleanup(parser, zip_path, current_app.config['UPLOAD_FOLDER'])
-        return {
-                   'inactive_after_sec': utils.get_file_removal_max_age_sec(),
-                   'output_filename': output_filename,
-                   'mime': mime,
-                   'key': key,
-                   'secret': secret,
-                   'meta_after': meta_after,
-                   'download_link': url_for(
-                       'api_bp.apidownload',
-                       key=key,
-                       secret=secret,
-                       filename=output_filename,
-                       _external=True
-                   )
-               }, 201
 
 
 class APISupportedExtensions(Resource):

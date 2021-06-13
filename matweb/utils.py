@@ -2,6 +2,7 @@ import hmac
 import os
 import hashlib
 import mimetypes as mtype
+from typing import Tuple
 
 from flask_restful import abort, current_app
 from libmat2 import parser_factory
@@ -97,7 +98,7 @@ def get_file_paths(filename, upload_folder):
     return complete_path, filepath
 
 
-def is_valid_api_download_file(filename: str, key: str, secret: str, upload_folder: str) -> [str, str]:
+def is_valid_api_download_file(filename: str, key: str, secret: str, upload_folder: str) -> Tuple[str, str]:
     if filename != secure_filename(filename):
         current_app.logger.error('Insecure filename %s', filename)
         abort(400, message='Insecure filename')

@@ -413,6 +413,24 @@ class Mat2APITestCase(unittest.TestCase):
         request = app.get(download_link)
         self.assertEqual(code, request.status_code)
 
+    def test_download_naughty_input(self):
+        request = self.app.get(
+            '/api/download/%F2%8C%BF%BD%F1%AE%98%A3%E4%B7%B8%F2%9B%94%BE%F2%A7%8B%83%F1%B1%80%9F%F3%AA%89%A6/1p/str'
+        )
+        error_message = request.get_json()['message']
+        self.assertEqual(404, request.status_code)
+        self.assertEqual("File not found", error_message)
+
+    def test_download_bulk_naughty_input(self):
+        request = self.app.post(
+            '/api/download/bulk',
+            data='\"\'\'\'&type %SYSTEMROOT%\\\\win.ini\"',
+            headers={'content-type': 'application/json'}
+        )
+        error_message = request.get_json()['message']
+        self.assertEqual(400, request.status_code)
+        self.assertEqual("Invalid Post Body", error_message)
+
     def test_upload_naughty_input(self):
         request = self.app.post('/api/upload',
                            data='{"file_name": "\\\\", '

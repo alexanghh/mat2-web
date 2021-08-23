@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from flask import after_this_request, send_from_directory, Blueprint, current_app
 from flask_restful import Resource, reqparse, abort, request, url_for, Api
-from cerberus import Validator
+from cerberus import Validator, DocumentError
 from werkzeug.datastructures import FileStorage
 from flasgger import swag_from
 
@@ -157,9 +157,13 @@ class APIBulkDownloadCreator(Resource):
         if not data:
             abort(400, message="Post Body Required")
             current_app.logger.error('BulkDownload -  Missing Post Body')
-        if not self.v.validate(data):
-            current_app.logger.error('BulkDownload -  Missing Post Body: %s', str(self.v.errors))
-            abort(400, message=self.v.errors)
+        try:
+            if not self.v.validate(data):
+                current_app.logger.error('BulkDownload -  Missing Post Body: %s', str(self.v.errors))
+                abort(400, message=self.v.errors)
+        except DocumentError as e:
+            abort(400, message="Invalid Post Body")
+            current_app.logger.error('BulkDownload -  Invalid Post Body: %s', str(e))
         # prevent the zip file from being overwritten
         zip_filename = 'files.' + str(uuid4()) + '.zip'
         zip_path = os.path.join(current_app.config['UPLOAD_FOLDER'], zip_filename)

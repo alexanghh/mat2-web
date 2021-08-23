@@ -26,8 +26,12 @@ class APIUpload(Resource):
         req_parser = reqparse.RequestParser()
         req_parser.add_argument('file_name', type=str, required=True, help='Post parameter is not specified: file_name')
         req_parser.add_argument('file', type=str, required=True, help='Post parameter is not specified: file')
+        try:
+            args = req_parser.parse_args()
+        except ValueError as e:
+            current_app.logger.error('Upload - failed parsing arguments %s', e)
+            abort(400, message='Failed parsing body')
 
-        args = req_parser.parse_args()
         try:
             file_data = base64.b64decode(args['file'])
         except (binascii.Error, ValueError) as e:

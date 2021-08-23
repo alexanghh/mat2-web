@@ -432,6 +432,14 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(400, request.status_code)
         self.assertEqual("Failed decoding file", error_message)
 
+        request = self.app.post('/api/upload',
+                                data="\"\'\'\'&&cat$z $z/etc$z/passwdu0000\"",
+                                headers={'content-type': 'application/json'}
+                                )
+        error_message = request.get_json()['message']
+        self.assertEqual(400, request.status_code)
+        self.assertEqual("Failed parsing body", error_message)
+
     def test_valid_opena_api_spec(self):
         spec = self.app.get('apispec_1.json').get_json()
         validate_spec(spec)

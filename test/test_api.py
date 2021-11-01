@@ -145,6 +145,7 @@ class Mat2APITestCase(unittest.TestCase):
                                      'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
                                 headers={'content-type': 'application/json'}
                                 )
+        print(request.get_json())
         self.assertEqual(request.status_code, 201)
         data = request.get_json()
 
@@ -196,8 +197,8 @@ class Mat2APITestCase(unittest.TestCase):
                                      'FcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}',
                                 headers={'content-type': 'application/json'}
                                 )
-        self.assertEqual(request.status_code, 201)
         upload_one = request.get_json()
+        self.assertEqual(request.status_code, 201)
 
         request = self.app.post('/api/upload',
                                 data='{"file_name": "test_name_two.jpg", '
@@ -460,6 +461,8 @@ class Mat2APITestCase(unittest.TestCase):
 
     def test_valid_opena_api_spec(self):
         spec = self.app.get('apispec_1.json').get_json()
+        # Test workaround due to https://github.com/flasgger/flasgger/issues/374
+        del spec['definitions']
         validate_spec(spec)
 
     def test_remove_metadata(self):

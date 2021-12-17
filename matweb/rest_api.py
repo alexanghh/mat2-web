@@ -98,8 +98,10 @@ class APIClean(Resource):
     @swag_from('./oas/remove_metadata.yml')
     def post(self):
         if 'file' not in request.files:
-            current_app.logger.error('Clean - No file part')
-            abort(400, message='No file part')
+            current_app.logger.error(
+                'Clean - File part missing: Multipart filename and non-chunked-transfer-encoding required'
+            )
+            abort(400, message='File part missing: Multipart filename and non-chunked-transfer-encoding required')
 
         uploaded_file = request.files['file']
         if not uploaded_file.filename:

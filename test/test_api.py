@@ -486,7 +486,10 @@ class Mat2APITestCase(unittest.TestCase):
             ),
             follow_redirects=False
         )
-        self.assertEqual(r.get_json()['message'], 'No file part')
+        self.assertEqual(
+            r.get_json()['message'],
+            'File part missing: Multipart filename and non-chunked-transfer-encoding required'
+        )
         self.assertEqual(r.status_code, 400)
 
         r = self.app.post(

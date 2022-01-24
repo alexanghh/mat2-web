@@ -88,6 +88,18 @@ class Mat2APITestCase(unittest.TestCase):
         error = request.get_json()['message']
         self.assertEqual(error, 'The filetype is not supported')
 
+    def test_api_not_supported_extension(self):
+        request = self.app.post('/api/upload',
+                                data='{"file_name": "test_name.csv", '
+                                     '"file": "MSwyLDMKNCw1LDY="}',
+                                headers={'content-type': 'application/json'}
+                                )
+        self.assertEqual(request.headers['Content-Type'], 'application/json')
+        self.assertEqual(request.status_code, 415)
+
+        error = request.get_json()['message']
+        self.assertEqual(error, 'The filetype is not supported')
+
     def test_api_supported_extensions(self):
         rv = self.app.get('/api/extension')
         self.assertEqual(rv.status_code, 200)
@@ -477,6 +489,20 @@ class Mat2APITestCase(unittest.TestCase):
         self.assertEqual(r.headers['Content-Disposition'], 'attachment; filename=test.cleaned.txt')
         self.assertEqual(r.headers['Content-Type'], 'text/plain; charset=utf-8')
         self.assertEqual(r.data, b'')
+
+    def test_remove_metadata_not_supported_extension(self):
+        r = self.app.post(
+            '/api/remove_metadata',
+            data=dict(
+                file=(io.BytesIO(b"1,2,3 \n 4,5,6"), 'test.csv'),
+            ),
+            follow_redirects=False
+        )
+        self.assertEqual(
+            r.get_json()['message'],
+            'The filetype is not supported'
+        )
+        self.assertEqual(r.status_code, 415)
 
     def test_remove_metdata_validation(self):
         r = self.app.post(

@@ -86,7 +86,7 @@ def upload_file():
                 download_uri=url_for('routes.download_file', key=key, secret=secret, filename=output_filename),
                 meta_after=meta_after,
             )
-        except (RuntimeError, ValueError):
+        except (RuntimeError, ValueError, AttributeError):
             flash('The type %s could not be cleaned' % mime)
 
     max_file_size = int(current_app.config['MAX_CONTENT_LENGTH'] / 1024 / 1024)

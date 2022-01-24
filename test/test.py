@@ -58,6 +58,14 @@ class Mat2WebTestCase(TestCase):
                     ), follow_redirects=False)
         self.assertEqual(rv.status_code, 302)
 
+    def test_get_upload_bad_file_type(self):
+        rv = self.client.post('/',
+                data=dict(
+                    file=(io.BytesIO(b"1,2,3 \n 4,5,6"), 'test.csv'),
+                    ), follow_redirects=False)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'The type text/csv could not be cleaned', rv.data)
+
     def test_get_upload_empty_file_redir(self):
         rv = self.client.post('/',
                 data=dict(

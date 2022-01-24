@@ -69,7 +69,7 @@ class APIUpload(Resource):
                     _external=True
                 )
             ), 201
-        except ValueError:
+        except (ValueError, AttributeError):
             current_app.logger.error('Upload - Invalid mime type')
             abort(415, message='The filetype is not supported')
         except RuntimeError:
@@ -119,7 +119,7 @@ class APIClean(Resource):
                 raise ValueError()
             parser.remove_all()
             _, _, _, output_filename = utils.cleanup(parser, filepath, current_app.config['UPLOAD_FOLDER'])
-        except ValueError:
+        except (ValueError, AttributeError):
             current_app.logger.error('Upload - Invalid mime type')
             abort(415, message='The filetype is not supported')
         except RuntimeError:

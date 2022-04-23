@@ -285,7 +285,7 @@ class Mat2APITestCase(unittest.TestCase):
         )
         self.assertEqual(400, request.status_code)
         error_message = request.get_json()['message']
-        self.assertEqual("Post Body Required", error_message)
+        self.assertEqual("The browser (or proxy) sent a request that this server could not understand.", error_message)
 
     def test_api_bulk_download_validation(self):
         post_body = {

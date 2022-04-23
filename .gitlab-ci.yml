@@ -6,10 +6,6 @@ stages:
   - renovate
   - build_container
 
-variables:
-  CONTAINER_TEST_IMAGE: registry.0xacab.org/jvoisin/mat2-web:$CI_BUILD_REF_NAME
-  CONTAINER_RELEASE_IMAGE: registry.0xacab.org/jvoisin/mat2-web:latest
-
 pyflakes:
   stage: linting
   script:

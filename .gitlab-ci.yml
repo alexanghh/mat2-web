@@ -67,4 +67,4 @@ renovate:
     name: renovate/renovate:34
     entrypoint: ['']
   script:
-    - node /usr/src/app/dist/renovate.js --platform gitlab --endpoint ${CI_API_V4_URL} --token ${GITLAB_API_TOKEN} ${CI_PROJECT_PATH}
+    - renovate --platform gitlab --endpoint ${CI_API_V4_URL} --token ${GITLAB_API_TOKEN} ${CI_PROJECT_PATH}

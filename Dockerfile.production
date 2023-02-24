@@ -6,7 +6,7 @@ RUN npm install \
     && npm install --global postcss \
     && npm run build:css
 # https://github.com/nginxinc/docker-nginx-unprivileged/blob/master/stable/buster/Dockerfile
-From debian:buster-slim
+From debian:bullseye-slim
 
 LABEL maintainer="Mat-Web Co-Maintainer <jan.friedli@immerda.ch>"
 

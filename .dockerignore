@@ -4,3 +4,4 @@ static/dist
 static/.webassets-cache
 *.md
 .git
+test

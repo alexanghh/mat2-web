@@ -283,9 +283,9 @@ class Mat2APITestCase(unittest.TestCase):
         request = self.app.post(
             '/api/download/bulk',
         )
-        self.assertEqual(400, request.status_code)
+        self.assertEqual(415, request.status_code)
         error_message = request.get_json()['message']
-        self.assertEqual("The browser (or proxy) sent a request that this server could not understand.", error_message)
+        self.assertEqual("Did not attempt to load JSON data because the request Content-Type was not 'application/json'.", error_message)
 
     def test_api_bulk_download_validation(self):
         post_body = {

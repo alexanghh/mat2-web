@@ -8,5 +8,5 @@ Flask-Cors==3.0.10
 Cerberus==1.3.4
 Flask-Testing==0.8.1
 blinker==1.6.2
-flasgger==0.9.7b2
+flasgger==0.9.7.1
 Flask-Assets==2.0

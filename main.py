@@ -34,7 +34,8 @@ def create_app(test_config=None):
 
     # Restful API hookup
     app.register_blueprint(rest_api.api_bp)
-    app.json_encoder = LazyJSONEncoder
+    app.json_provider_class = LazyJSONEncoder
+    app.json = LazyJSONEncoder(app)
 
     dirname = os.path.dirname(__file__)
     with open(os.path.join(dirname, 'matweb/oas/components.yml')) as file:

@@ -474,7 +474,6 @@ class Mat2APITestCase(unittest.TestCase):
     def test_valid_opena_api_spec(self):
         spec = self.app.get('apispec_1.json').get_json()
         # Test workaround due to https://github.com/flasgger/flasgger/issues/374
-        del spec['definitions']
         validate_spec(spec)
 
     def test_remove_metadata(self):

@@ -2,3 +2,6 @@ openapi-spec-validator==0.2.8
 types-Flask==1.1.0
 types-Jinja2==2.11.1
 types-PyYAML==0.1.7
+wheel==0.40.0
+coverage==7.2.7
+Flask-Testing==0.8.1

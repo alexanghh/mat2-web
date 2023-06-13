@@ -41,7 +41,7 @@ tests:debian:
     - python3 -m venv .venv
     - source .venv/bin/activate
     - pip3 install -r requirements.txt -r requirements-test.txt
-    - coverage run --branch --include main.py,matweb/*.py -m unittest discover -s test
+    - coverage run --branch --include ./main.py,matweb/*.py -m unittest discover -s test
     - coverage report -m
     - coverage xml
   coverage: '/TOTAL.*(\d\d%)/'

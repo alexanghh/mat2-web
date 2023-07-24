@@ -68,7 +68,7 @@ renovate:
   variables:
     RENOVATE_TOKEN: $GITLAB_API_TOKEN
   image:
-    name: renovate/renovate:35
+    name: renovate/renovate:36
     entrypoint: ['']
   script:
     - renovate --platform gitlab --endpoint ${CI_API_V4_URL} --token ${GITLAB_API_TOKEN} ${CI_PROJECT_PATH}

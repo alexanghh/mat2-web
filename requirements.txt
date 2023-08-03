@@ -1,7 +1,7 @@
 mutagen==1.46.0
 ffmpeg==1.4
 bubblewrap==1.2.0
-mat2==0.13.3
+mat2==0.13.4
 flask==2.3.2
 Flask-RESTful==0.3.10
 Flask-Cors==4.0.0

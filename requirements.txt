@@ -1,4 +1,4 @@
-mutagen==1.46.0
+mutagen==1.47.0
 ffmpeg==1.4
 bubblewrap==1.2.0
 mat2==0.13.4
